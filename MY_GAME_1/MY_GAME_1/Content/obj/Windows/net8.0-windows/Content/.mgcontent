@@ -4,11 +4,11 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>O:/MONOGAME/MY GAME 1 (2)/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
-    <File>O:/MONOGAME/MY GAME 1 (2)/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
-    <File>O:/MONOGAME/MY GAME 1 (2)/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
-    <File>O:/MONOGAME/MY GAME 1 (2)/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
-    <File>O:/MONOGAME/MY GAME 1 (2)/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/test.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

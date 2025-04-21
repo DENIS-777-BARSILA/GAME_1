@@ -1,1 +1,6 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png","C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/Background_0.xnb","TextureProcessor","Texture2DContent",27504,1278037,0,3429077
+"C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png","C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/mobokot.xnb","TextureProcessor","Texture2DContent",9089,2540485,0,1255091
+"C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png","C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/platform_1.xnb","TextureProcessor","Texture2DContent",177,8277,0,0036365
+"C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png","C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/scottpilgrim_multiple.xnb","TextureProcessor","Texture2DContent",6210,967765,0,0583183
+"C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png","C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/test.xnb","TextureProcessor","Texture2DContent",32046,199453,0,0124345

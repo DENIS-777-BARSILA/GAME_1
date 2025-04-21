@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "A1jmfjuen8Y=",
+  "dgSpecHash": "ERh4VroJwrc=",
   "success": true,
-  "projectFilePath": "C:\\MyC#Projects\\MY_GAME_1 (1)\\MY_GAME_1\\MY_GAME_1\\MY_GAME_1.csproj",
+  "projectFilePath": "C:\\UniryGame\\GitHub1\\GAME_1\\MY_GAME_1\\MY_GAME_1\\MY_GAME_1.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ПК\\.nuget\\packages\\microsoft.netcore.app\\2.1.30\\microsoft.netcore.app.2.1.30.nupkg.sha512",
     "C:\\Users\\ПК\\.nuget\\packages\\microsoft.netcore.dotnetapphost\\2.1.30\\microsoft.netcore.dotnetapphost.2.1.30.nupkg.sha512",
