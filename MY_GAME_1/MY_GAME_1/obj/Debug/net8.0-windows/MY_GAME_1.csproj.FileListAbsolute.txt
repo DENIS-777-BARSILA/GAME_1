@@ -1,0 +1,62 @@
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.exe
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.deps.json
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.runtimeconfig.json
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.pdb
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MonoGame.Framework.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Direct2D1.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Direct3D11.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Direct3D9.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.DXGI.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Mathematics.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.MediaFoundation.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.XAudio2.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.XInput.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.csproj.AssemblyReference.cache
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.GeneratedMSBuildEditorConfig.editorconfig
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.AssemblyInfoInputs.cache
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.AssemblyInfo.cs
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.csproj.CoreCompileInputs.cache
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.csproj.Up2Date
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\refint\MY_GAME_1.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.pdb
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.genruntimeconfig.cache
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\ref\MY_GAME_1.dll
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\mobokot.xnb
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\scottpilgrim_multiple.xnb
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\platform_1.xnb
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\Background_0.xnb
+C:\MyC#Projects\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\test.xnb
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\Background_0.xnb
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\mobokot.xnb
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\platform_1.xnb
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\scottpilgrim_multiple.xnb
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\test.xnb
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.exe
+O:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.deps.json
+O:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.runtimeconfig.json
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.pdb
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MonoGame.Framework.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Direct2D1.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Direct3D11.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Direct3D9.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.DXGI.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.Mathematics.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.MediaFoundation.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.XAudio2.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\SharpDX.XInput.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.csproj.AssemblyReference.cache
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.GeneratedMSBuildEditorConfig.editorconfig
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.AssemblyInfoInputs.cache
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.AssemblyInfo.cs
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.csproj.CoreCompileInputs.cache
+O:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.csproj.Up2Date
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\refint\MY_GAME_1.dll
+o:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.pdb
+O:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME_1.genruntimeconfig.cache
+O:\MONOGAME\MY GAME 1 (2)\MY GAME 1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\ref\MY_GAME_1.dll

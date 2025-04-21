@@ -1,0 +1,6 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/Background_0.png","c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Background_0.xnb","TextureProcessor","Texture2DContent",27504,1278037,0,1134855
+"c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/mobokot.png","c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/mobokot.xnb","TextureProcessor","Texture2DContent",9089,2540485,0,0604696
+"c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/platform_1.png","c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/platform_1.xnb","TextureProcessor","Texture2DContent",177,8277,0,0031953
+"c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png","c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/scottpilgrim_multiple.xnb","TextureProcessor","Texture2DContent",6210,967765,0,0311055
+"c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/test.png","c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/test.xnb","TextureProcessor","Texture2DContent",32046,199453,0,0120085

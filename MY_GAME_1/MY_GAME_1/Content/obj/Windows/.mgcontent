@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SourceFileCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Profile>Reach</Profile>
+  <Platform>Windows</Platform>
+  <Config />
+  <SourceFiles>
+    <File>c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
+    <File>c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
+    <File>c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
+    <File>c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
+    <File>c:/MyC#Projects/MY GAME 1/MY_GAME_1/MY_GAME_1/Content/test.png</File>
+  </SourceFiles>
+  <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
+  </DestFiles>
+</SourceFileCollection>
