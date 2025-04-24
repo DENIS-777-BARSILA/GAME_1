@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Components;
+using System.Linq;
 
 
 namespace MY_GAME_1;
@@ -37,10 +38,13 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
+        GameWorld.viewport = GraphicsDevice.Viewport;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _level = new Level(GraphicsDevice, Content);
         _level.LoadContent();
         _level.Initialize();
+         GameWorld.Level = _level;
+
 
     }
 
@@ -49,8 +53,11 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        GameWorld.player.Update();
+        GameWorld.Level.Update(gameTime);
+        GameWorld.player.Update(); 
 
+        if (GameWorld.Bullets.Count > 0)
+            GameWorld.Bullets.ForEach(b => b.Update());
 
         base.Update(gameTime);
     }
@@ -72,6 +79,8 @@ public class Game1 : Game
         {
             obj.RenderComp.Draw(_spriteBatch);
         }
+        GameWorld.Bullets.ForEach(b => b.RenderComp.Draw(_spriteBatch));
+
         ///
 
 
@@ -81,12 +90,12 @@ public class Game1 : Game
         debugTexture.SetData(new[] { Color.Red });
 
         // хитбокс игрока
-        Rectangle playerBounds = new Rectangle(
-             (int)GameWorld.player.PositionComp.Position.X,
-              (int)GameWorld.player.PositionComp.Position.Y,
-              GameWorld.player.RenderComp.Width,
-             GameWorld.player.RenderComp.Height);
-        _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
+        //  Rectangle playerBounds = new Rectangle(
+        //     (int)GameWorld.player.PositionComp.Position.X,
+        //      (int)GameWorld.player.PositionComp.Position.Y,
+        //     GameWorld.player.RenderComp.Width,
+        //    GameWorld.player.RenderComp.Height);
+        // _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
 
 
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</SourceFile>
-  <SourceTime>2025-04-21T18:18:02.4970799+05:00</SourceTime>
-  <DestFile>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/mobokot.xnb</DestFile>
-  <DestTime>2025-04-23T22:46:04.930682+05:00</DestTime>
+  <SourceFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png</SourceFile>
+  <SourceTime>2025-04-23T22:45:43.6674635+05:00</SourceTime>
+  <DestFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/bullet.xnb</DestFile>
+  <DestTime>2025-04-24T10:02:26.1682345+05:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

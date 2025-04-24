@@ -152,14 +152,14 @@ public class PhysicalComponent
     private List<IGameObject> GameObjects;
     private readonly Viewport Viewport;
 
-    static private float gravity = 6;
+    public static readonly float Gravity = 6;
 
-    public PhysicalComponent(PositionComponent positionComp, RenderComponent renderComp, Viewport viewport)
+    public PhysicalComponent(PositionComponent positionComp, RenderComponent renderComp)
     {
         PositionComp = positionComp;
         RenderComp = renderComp;
         GameObjects = GameWorld.GameObjects;
-        Viewport = viewport;
+        Viewport = GameWorld.viewport;
     }
 
     public bool IsGrounded()
@@ -193,9 +193,6 @@ public class PhysicalComponent
         if (direction == Vector2.Zero)
             return new ColisionData(Side.None, 0);
 
-        direction = Vector2.Normalize(direction);
-        bool movingHorizontally = Math.Abs(direction.X) > Math.Abs(direction.Y);
-
         ColisionData nearestCollision = new ColisionData(Side.None, int.MaxValue);
 
         foreach (var obj in GameObjects)
@@ -207,59 +204,46 @@ public class PhysicalComponent
                 (int)obj.PositionComp.Position.Y,
                 obj.RenderComp.Width,
                 obj.RenderComp.Height);
-            Rectangle currentBounds = new Rectangle(
-                (int)PositionComp.Position.X,
-                (int)PositionComp.Position.Y,
-                RenderComp.Width,
-                RenderComp.Height);
 
             if (!newBounds.Intersects(otherBounds)) continue;
 
-            Rectangle intersection = Rectangle.Intersect(newBounds, otherBounds);
             int penetration = 0;
             Side currentSide = Side.None;
 
-            if (movingHorizontally)
+            if (Math.Abs(direction.X) > Math.Abs(direction.Y))
             {
 
-                if (newBounds.Right > otherBounds.Left && currentBounds.Right <= otherBounds.Left)
+                if (newBounds.Right > otherBounds.Left && direction.X > 0)
                 {
-
                     penetration = otherBounds.Left - newBounds.Right;
                     currentSide = Side.Right;
                 }
-                else if (newBounds.Left < otherBounds.Right && currentBounds.Left >= otherBounds.Right)
+                else if (newBounds.Left < otherBounds.Right && direction.X < 0)
                 {
-
                     penetration = newBounds.Left - otherBounds.Right;
                     currentSide = Side.Left;
                 }
             }
+
             else
             {
-               if (newBounds.Bottom > otherBounds.Top && currentBounds.Bottom <= otherBounds.Top)
+                if (newBounds.Bottom > otherBounds.Top && direction.Y > 0)
                 {
-
                     penetration = otherBounds.Top - newBounds.Bottom;
                     currentSide = Side.Bottom;
                 }
-                else if (newBounds.Top < otherBounds.Bottom && currentBounds.Top >= otherBounds.Bottom)
-                {
 
-                    penetration =  newBounds.Bottom- otherBounds.Top ;
+                else if (newBounds.Top < otherBounds.Bottom && direction.Y < 0)
+                {
+                    penetration = otherBounds.Bottom - newBounds.Top;
                     currentSide = Side.Top;
                 }
             }
 
-
-            if (Math.Abs(penetration) < Math.Abs(nearestCollision.Penetration))
-            {
-                nearestCollision = new ColisionData(currentSide, penetration);
-            }
+            nearestCollision = new ColisionData(currentSide, penetration);
         }
 
-
-        if (movingHorizontally)
+        if (Math.Abs(direction.X) > Math.Abs(direction.Y))
         {
             if (direction.X > 0 && newBounds.Right > Viewport.Width)
             {
@@ -276,7 +260,7 @@ public class PhysicalComponent
         }
         else
         {
-             if (direction.Y < 0 && newBounds.Top < 0)
+            if (direction.Y < 0 && newBounds.Top < 0)
             {
                 int penetration = newBounds.Top;
                 if (Math.Abs(penetration) < Math.Abs(nearestCollision.Penetration))
@@ -288,12 +272,10 @@ public class PhysicalComponent
                 if (penetration < nearestCollision.Penetration)
                     nearestCollision = new ColisionData(Side.Bottom, penetration);
             }
-            
         }
 
         return nearestCollision;
     }
-
 
     public Side GetCollisionSideWithObjectBounds(Rectangle bounds, Rectangle otherBounds)
     {
@@ -376,7 +358,7 @@ public class PhysicalComponent
     {
         if (!IsGrounded())
         {
-            Vector2 newPosition = PositionComp.Position + new Vector2(0, gravity);
+            Vector2 newPosition = PositionComp.Position + new Vector2(0, Gravity);
             Move(newPosition);
         }
     }
@@ -386,21 +368,53 @@ public class PhysicalComponent
 public class MotionComponent
 {
     public float SpeedX;
+
     public float SpeedY;
-    private float jumpHeigh = -195;
+    public float JumpHeight = -195;
+    private float JumpSpeed = 0f;
+    private bool IsJumping;
+
+    public readonly bool IsKeyboardOperation;
 
     private PositionComponent PositionComp;
     private PhysicalComponent PhysicalComp;
 
-    public MotionComponent(float speedX, float speedY, PositionComponent positionComp, PhysicalComponent physicalComp)
+    public MotionComponent(float speedX, float speedY, PositionComponent positionComp, PhysicalComponent physicalComp, bool isKeyboardOperation)
     {
         SpeedX = speedX;
         SpeedY = speedY;
         PositionComp = positionComp;
         PhysicalComp = physicalComp;
+        IsKeyboardOperation = isKeyboardOperation;
     }
 
     public void Update(KeyboardState keyboardState)
+    {
+        if (IsKeyboardOperation)
+            KeybordMotion(keyboardState);
+
+        if (IsJumping)
+        {
+            JumpSpeed += PhysicalComponent.Gravity;
+            Vector2 newPosition = PositionComp.Position + new Vector2(0, JumpSpeed * 0.1f);
+            PhysicalComp.Move(newPosition);
+
+            if (PhysicalComp.IsGrounded())
+            {
+                IsJumping = false;
+                JumpSpeed = 0f;
+            }
+        }
+    }
+
+    public void Update()
+    {
+        Vector2 newPosition = PositionComp.Position + new Vector2(0, JumpSpeed * 0.1f);
+        PhysicalComp.Move(newPosition);
+    }
+
+
+    private void KeybordMotion(KeyboardState keyboardState)
     {
         if (keyboardState.IsKeyDown(Keys.Left))
         {
@@ -418,12 +432,54 @@ public class MotionComponent
             Jump();
     }
 
-    public void Jump()
+    private void Move(Vector2 newPosition)
     {
-        if (PhysicalComp.IsGrounded())
+        PhysicalComp.Move(new Vector2(newPosition.X, 0));
+        PhysicalComp.Move(new Vector2(0, newPosition.Y));
+    }
+
+    private void Jump()
+    {
+        if (!IsJumping && PhysicalComp.IsGrounded())
         {
-            Vector2 newPosition = PositionComp.Position + new Vector2(0, jumpHeigh);
-            PhysicalComp.Move(newPosition);
+            IsJumping = true;
+            JumpSpeed = JumpHeight;
         }
     }
+}
+
+public class ShootingComponent
+{
+    private PositionComponent PositionComp;
+
+    public readonly float Speed = 50;
+
+    private float _lastShotTime;
+    private const float ShotDelay = 0.2f; 
+
+    public ShootingComponent(PositionComponent positionComp, float speed)
+    {
+        PositionComp = positionComp;
+        Speed = speed;
+    }
+
+
+    public void Update(MouseState mouseState)
+    {
+        
+        if (mouseState.LeftButton == ButtonState.Pressed && 
+            (float)GameWorld.Level.GameTime.TotalGameTime.TotalSeconds - _lastShotTime > ShotDelay)
+            MakeBullet(mouseState);
+    }
+
+    public void MakeBullet(MouseState mouseState)
+    {
+        Vector2 target = new Vector2(mouseState.X, mouseState.Y);
+        Vector2 gunPosition = new Vector2(PositionComp.Position.X + PositionComp.Width / 2, PositionComp.Position.Y + PositionComp.Height / 2);
+
+        Vector2 direction = target - gunPosition;
+
+        GameWorld.Bullets.Add(new Bullet(gunPosition, GameWorld.Level.TextureBullet, GameWorld.viewport, 0.1f, 20, 20));
+    }
+
 }
