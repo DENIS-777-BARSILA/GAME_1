@@ -43,7 +43,7 @@ public class Game1 : Game
         _level = new Level(GraphicsDevice, Content);
         _level.LoadContent();
         _level.Initialize();
-         GameWorld.Level = _level;
+        GameWorld.Level = _level;
 
 
     }
@@ -54,10 +54,12 @@ public class Game1 : Game
             Exit();
 
         GameWorld.Level.Update(gameTime);
-        GameWorld.player.Update(); 
+        GameWorld.player.Update();
 
-        if (GameWorld.Bullets.Count > 0)
-            GameWorld.Bullets.ForEach(b => b.Update());
+        for (int i = GameWorld.Bullets.Count - 1; i >= 0; i--)
+        {
+            GameWorld.Bullets[i].Update();
+        }
 
         base.Update(gameTime);
     }
@@ -75,10 +77,8 @@ public class Game1 : Game
 
         GameWorld.player.RenderComp.Draw(_spriteBatch);
 
-        foreach (IGameObject obj in GameWorld.GameObjects)
-        {
-            obj.RenderComp.Draw(_spriteBatch);
-        }
+
+        GameWorld.GameObjects.ForEach(o => o.RenderComp.Draw(_spriteBatch));
         GameWorld.Bullets.ForEach(b => b.RenderComp.Draw(_spriteBatch));
 
         ///

@@ -193,6 +193,15 @@ public class PhysicalComponent
         if (direction == Vector2.Zero)
             return new ColisionData(Side.None, 0);
 
+        ColisionData objectCollision = GetObjectCollisions(newBounds, direction);
+
+        ColisionData viewportCollision = GetViewportCollisions(newBounds, direction);
+
+        return GetNearestCollision(objectCollision, viewportCollision);
+    }
+
+    public ColisionData GetObjectCollisions(Rectangle newBounds, Vector2 direction)
+    {
         ColisionData nearestCollision = new ColisionData(Side.None, int.MaxValue);
 
         foreach (var obj in GameObjects)
@@ -212,7 +221,6 @@ public class PhysicalComponent
 
             if (Math.Abs(direction.X) > Math.Abs(direction.Y))
             {
-
                 if (newBounds.Right > otherBounds.Left && direction.X > 0)
                 {
                     penetration = otherBounds.Left - newBounds.Right;
@@ -224,7 +232,6 @@ public class PhysicalComponent
                     currentSide = Side.Left;
                 }
             }
-
             else
             {
                 if (newBounds.Bottom > otherBounds.Top && direction.Y > 0)
@@ -232,7 +239,6 @@ public class PhysicalComponent
                     penetration = otherBounds.Top - newBounds.Bottom;
                     currentSide = Side.Bottom;
                 }
-
                 else if (newBounds.Top < otherBounds.Bottom && direction.Y < 0)
                 {
                     penetration = otherBounds.Bottom - newBounds.Top;
@@ -240,22 +246,30 @@ public class PhysicalComponent
                 }
             }
 
-            nearestCollision = new ColisionData(currentSide, penetration);
+            if (Math.Abs(penetration) < Math.Abs(nearestCollision.Penetration))
+            {
+                nearestCollision = new ColisionData(currentSide, penetration);
+            }
         }
+
+        return nearestCollision;
+    }
+
+    public ColisionData GetViewportCollisions(Rectangle newBounds, Vector2 direction)
+    {
+        ColisionData viewportCollision = new ColisionData(Side.None, int.MaxValue);
 
         if (Math.Abs(direction.X) > Math.Abs(direction.Y))
         {
             if (direction.X > 0 && newBounds.Right > Viewport.Width)
             {
                 int penetration = Viewport.Width - newBounds.Right;
-                if (penetration < nearestCollision.Penetration)
-                    nearestCollision = new ColisionData(Side.Right, penetration);
+                viewportCollision = new ColisionData(Side.Right, penetration);
             }
             else if (direction.X < 0 && newBounds.Left < 0)
             {
                 int penetration = newBounds.Left;
-                if (Math.Abs(penetration) < Math.Abs(nearestCollision.Penetration))
-                    nearestCollision = new ColisionData(Side.Left, penetration);
+                viewportCollision = new ColisionData(Side.Left, penetration);
             }
         }
         else
@@ -263,19 +277,36 @@ public class PhysicalComponent
             if (direction.Y < 0 && newBounds.Top < 0)
             {
                 int penetration = newBounds.Top;
-                if (Math.Abs(penetration) < Math.Abs(nearestCollision.Penetration))
-                    nearestCollision = new ColisionData(Side.Top, penetration);
+                viewportCollision = new ColisionData(Side.Top, penetration);
             }
             else if (direction.Y > 0 && newBounds.Bottom > Viewport.Height)
             {
                 int penetration = Viewport.Height - newBounds.Bottom;
-                if (penetration < nearestCollision.Penetration)
-                    nearestCollision = new ColisionData(Side.Bottom, penetration);
+                viewportCollision = new ColisionData(Side.Bottom, penetration);
             }
         }
 
-        return nearestCollision;
+        return viewportCollision;
     }
+
+    private ColisionData GetNearestCollision(params ColisionData[] collisions)
+    {
+        ColisionData result = new ColisionData(Side.None, int.MaxValue);
+
+        foreach (var collision in collisions)
+        {
+            if (collision.Side == Side.None) continue;
+
+            if (Math.Abs(collision.Penetration) < Math.Abs(result.Penetration))
+            {
+                result = collision;
+            }
+        }
+
+        return result.Side != Side.None ? result : new ColisionData(Side.None, 0);
+    }
+
+
 
     public Side GetCollisionSideWithObjectBounds(Rectangle bounds, Rectangle otherBounds)
     {
@@ -362,8 +393,16 @@ public class PhysicalComponent
             Move(newPosition);
         }
     }
-}
 
+    public bool CheckVievportCollision(Vector2 Position, float indent)
+    {
+        return
+        Position.X < 0 - indent ||
+        Position.X > GameWorld.viewport.Width + indent ||
+        Position.Y < 0 - indent ||
+        Position.Y > GameWorld.viewport.Height + indent;
+    }
+}
 
 public class MotionComponent
 {
@@ -409,8 +448,8 @@ public class MotionComponent
 
     public void Update()
     {
-        Vector2 newPosition = PositionComp.Position + new Vector2(0, JumpSpeed * 0.1f);
-        PhysicalComp.Move(newPosition);
+        Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, SpeedY);
+        Move(newPosition);
     }
 
 
@@ -446,16 +485,17 @@ public class MotionComponent
             JumpSpeed = JumpHeight;
         }
     }
+
 }
 
 public class ShootingComponent
 {
     private PositionComponent PositionComp;
 
-    public readonly float Speed = 50;
+    public readonly float Speed = 1;
 
     private float _lastShotTime;
-    private const float ShotDelay = 0.2f; 
+    private const float ShotDelay = 0.5f;
 
     public ShootingComponent(PositionComponent positionComp, float speed)
     {
@@ -466,10 +506,17 @@ public class ShootingComponent
 
     public void Update(MouseState mouseState)
     {
-        
-        if (mouseState.LeftButton == ButtonState.Pressed && 
-            (float)GameWorld.Level.GameTime.TotalGameTime.TotalSeconds - _lastShotTime > ShotDelay)
-            MakeBullet(mouseState);
+
+        if (mouseState.LeftButton == ButtonState.Pressed)
+        {
+            float currentTime = (float)GameWorld.Level.GameTime.TotalGameTime.TotalSeconds;
+            if (currentTime - _lastShotTime > ShotDelay)
+            {
+                MakeBullet(mouseState);
+                _lastShotTime = currentTime;
+            }
+
+        }
     }
 
     public void MakeBullet(MouseState mouseState)
@@ -478,8 +525,12 @@ public class ShootingComponent
         Vector2 gunPosition = new Vector2(PositionComp.Position.X + PositionComp.Width / 2, PositionComp.Position.Y + PositionComp.Height / 2);
 
         Vector2 direction = target - gunPosition;
+        direction = Vector2.Normalize(direction);
 
-        GameWorld.Bullets.Add(new Bullet(gunPosition, GameWorld.Level.TextureBullet, GameWorld.viewport, 0.1f, 20, 20));
+        GameWorld.Bullets.Add(new Bullet(gunPosition, GameWorld.Level.TextureBullet, GameWorld.viewport, 0.1f,
+         direction.X * Speed, direction.Y * Speed));
+
+          Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
     }
 
 }

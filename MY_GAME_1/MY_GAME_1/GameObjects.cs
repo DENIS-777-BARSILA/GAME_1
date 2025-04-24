@@ -30,7 +30,7 @@ public class Player : IGameObject
     public RenderComponent RenderComp { get; } = null;
     public MotionComponent MotionComp { get; }
     public PhysicalComponent PhysicalComp { get; }
-    public ShootingComponent ShootingComp{ get; }
+    public ShootingComponent ShootingComp { get; }
 
     public Player(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
     {
@@ -102,7 +102,17 @@ public class Bullet : IGameObject
 
     public void Update()
     {
-        MotionComp.Update();
+        Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, SpeedY);
+        Rectangle newBounds = new Rectangle((int)newPosition.X, (int)newPosition.Y,
+            RenderComp.Width, RenderComp.Height);
+
+        if (PhysicalComp.GetObjectCollisions(newBounds, new Vector2(SpeedX, SpeedY)).Side != Side.None)
+            GameWorld.Bullets.Remove(this);
+
+        if (PhysicalComp.CheckVievportCollision(PositionComp.Position, 50))
+            GameWorld.Bullets.Remove(this);
+
+        PositionComp.Position = newPosition;
     }
 }
 

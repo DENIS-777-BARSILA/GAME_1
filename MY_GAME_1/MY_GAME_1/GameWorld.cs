@@ -68,7 +68,7 @@ public class Level
             0.15f);
 
         PlatfotmCreator.MakePlatform_(0.3f,
-            new Vector2(100, 800),
+            new Vector2(100, 800),   
             new Vector2(200, 700),
             new Vector2(400, 600),
             new Vector2(600, 500),
