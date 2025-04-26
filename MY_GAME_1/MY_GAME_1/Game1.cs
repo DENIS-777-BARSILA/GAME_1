@@ -72,12 +72,13 @@ public class Game1 : Game
         _spriteBatch.Begin();
 
         /// 
-        _spriteBatch.Draw(_level.BackgroundImage, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth,
-        _graphics.PreferredBackBufferHeight), Color.White);
+       // _spriteBatch.Draw(_level.BackgroundImage, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth,
+       // _graphics.PreferredBackBufferHeight), Color.White);
+
+        GameWorld.background.RenderComp.Draw(_spriteBatch);
 
         GameWorld.player.RenderComp.Draw(_spriteBatch);
-
-
+        
         GameWorld.GameObjects.ForEach(o => o.RenderComp.Draw(_spriteBatch));
         GameWorld.Bullets.ForEach(b => b.RenderComp.Draw(_spriteBatch));
 
@@ -90,12 +91,12 @@ public class Game1 : Game
         debugTexture.SetData(new[] { Color.Red });
 
         // хитбокс игрока
-        //  Rectangle playerBounds = new Rectangle(
-        //     (int)GameWorld.player.PositionComp.Position.X,
-        //      (int)GameWorld.player.PositionComp.Position.Y,
-        //     GameWorld.player.RenderComp.Width,
-        //    GameWorld.player.RenderComp.Height);
-        // _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
+        Rectangle playerBounds = new Rectangle(
+          (int)GameWorld.player.PositionComp.Position.X,
+          (int)GameWorld.player.PositionComp.Position.Y,
+         GameWorld.player.RenderComp.Width,
+         GameWorld.player.RenderComp.Height);
+        _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
 
 
 

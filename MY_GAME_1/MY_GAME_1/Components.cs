@@ -26,7 +26,6 @@ public class ColisionData
         Side = side;
         Penetration = penetration;
     }
-
 }
 
 
@@ -79,11 +78,9 @@ public class RenderComponent
 {
     public readonly Texture2D texture;
     public PositionComponent PositionComp;
+    public MotionComponent MotionComp;
 
-
-    private int height;
-    private int width;
-    private float scale = 1.0f;
+    public float Rotation { get; set; }
     public float Scale
     {
         get => scale;
@@ -98,7 +95,21 @@ public class RenderComponent
     public int Width { get; private set; }
     public int Height { get; private set; }
 
-    public RenderComponent(Texture2D texture, PositionComponent positionComp, float scale)
+    private int height;
+    private int width;
+    private float scale = 1.0f;
+
+
+    private readonly int frameWidth;
+    private readonly int frameHeight;
+    private int countFrameX = 1;
+    private int countFrameY = 1;
+    private int frameX = 0;
+    private int frameY = 0;
+
+    private Rectangle currentFrame;
+
+    public RenderComponent(Texture2D texture, PositionComponent positionComp, float scale)  //without animation
     {
         this.texture = texture;
         PositionComp = positionComp;
@@ -107,21 +118,83 @@ public class RenderComponent
         width = texture.Width;
 
         this.Scale = scale;
+
+        frameWidth = width;
+        frameHeight = height;
+        currentFrame = new Rectangle(0, 0, width, height);
+    }
+
+    public RenderComponent(Texture2D texture, PositionComponent positionComp,
+     float scale, int countFrameX, int countFrameY) //with animation 
+    {
+        this.texture = texture;
+
+        PositionComp = positionComp;
+
+        height = texture.Height;
+        width = texture.Width;
+
+        this.Scale = scale;
+
+        this.countFrameX = countFrameX;
+        this.countFrameY = countFrameY;
+
+        frameWidth = width / countFrameX;
+        frameHeight = height / countFrameY;
+
+        currentFrame = new Rectangle(0, 0, frameWidth, frameHeight);
+    }
+
+    private void UpdateCurrentFrame()
+    {
+        if (!IsCorrect())
+            return;
+
+        if (MotionComp.ISMotion)
+        {
+            frameX = (frameX + 1);
+            if (frameX > countFrameX)
+            {
+                frameX = frameX % countFrameX;
+                frameY = (frameY + 1) % countFrameY;
+            }
+        }
+
+        else
+            frameX = 0;
+
+        currentFrame = new Rectangle(
+            frameX * frameWidth,
+            frameY * frameHeight,
+            frameWidth,
+            frameHeight
+        );
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        if (!IsCorrect())
+            return;
+        UpdateCurrentFrame();
+
         spriteBatch.Draw(
             texture,
             PositionComp.Position,
-            null,
+            currentFrame,
             Color.White,
-            0f,
-            Vector2.Zero,
+            Rotation,
+             Vector2.Zero,
             scale,
             SpriteEffects.None,
             0f);
 
+
+        Console.WriteLine($"Drawing frame: X={frameX}, Y={frameY}");
+    }
+
+    private bool IsCorrect()
+    {
+        return PositionComp != null && MotionComp != null;
     }
 }
 
@@ -381,7 +454,7 @@ public class PhysicalComponent
         }
 
         PositionComp.Position = correctedPosition;
-        return false;
+        return collisionData.Penetration > 0;
     }
 
 
@@ -411,7 +484,9 @@ public class MotionComponent
     public float SpeedY;
     public float JumpHeight = -195;
     private float JumpSpeed = 0f;
-    private bool IsJumping;
+    public bool IsJumping { get; private set; }
+    public bool ISMotion { get; private set; }
+
 
     public readonly bool IsKeyboardOperation;
 
@@ -429,6 +504,8 @@ public class MotionComponent
 
     public void Update(KeyboardState keyboardState)
     {
+        ISMotion = false;
+
         if (IsKeyboardOperation)
             KeybordMotion(keyboardState);
 
@@ -444,6 +521,7 @@ public class MotionComponent
                 JumpSpeed = 0f;
             }
         }
+        Console.WriteLine($"IsMotion: {ISMotion}");
     }
 
     public void Update()
@@ -458,23 +536,25 @@ public class MotionComponent
         if (keyboardState.IsKeyDown(Keys.Left))
         {
             Vector2 newPosition = PositionComp.Position - new Vector2(SpeedX, 0);
-            PhysicalComp.Move(newPosition);
+            ISMotion = PhysicalComp.Move(newPosition);
         }
 
         if (keyboardState.IsKeyDown(Keys.Right))
         {
             Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, 0);
-            PhysicalComp.Move(newPosition);
+            ISMotion = PhysicalComp.Move(newPosition);
         }
 
         if (keyboardState.IsKeyDown(Keys.Space))
             Jump();
+
+
     }
 
     private void Move(Vector2 newPosition)
     {
-        PhysicalComp.Move(new Vector2(newPosition.X, 0));
-        PhysicalComp.Move(new Vector2(0, newPosition.Y));
+        ISMotion = PhysicalComp.Move(new Vector2(newPosition.X, 0));
+        ISMotion = PhysicalComp.Move(new Vector2(0, newPosition.Y));
     }
 
     private void Jump()
@@ -530,7 +610,7 @@ public class ShootingComponent
         GameWorld.Bullets.Add(new Bullet(gunPosition, GameWorld.Level.TextureBullet, GameWorld.viewport, 0.1f,
          direction.X * Speed, direction.Y * Speed));
 
-          Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
+        Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
     }
 
 }

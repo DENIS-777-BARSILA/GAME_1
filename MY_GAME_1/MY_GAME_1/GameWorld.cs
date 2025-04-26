@@ -12,10 +12,13 @@ namespace MY_GAME_1;
 
 public static class GameWorld
 {
+    public static Background background;
     public static Player player;
     public static PlatfotmCreator platformCreater;
+    public static MonsterCreator monsterCreater;
+
     public static List<Bullet> Bullets = new List<Bullet>();
-    public static Background background;
+    
     public static List<IGameObject> GameObjects = new List<IGameObject>();
     public static Level Level;
 
@@ -30,14 +33,12 @@ public class Level
 
     public Texture2D BackgroundImage { get; private set; }
     public Texture2D TexturePlayer { get; private set; }
+
     public Texture2D TexturePlatform { get; private set; }
     public Texture2D TextureBullet { get; private set; }
     public Texture2D TextureTest { get; private set; }
 
-    public PlatfotmCreator PlatfotmCreator { get; private set; }
-
-
-
+    public Texture2D TextureMonster { get; private set; }
 
     public Level(GraphicsDevice graphicsDevice, ContentManager content)
     {
@@ -45,19 +46,21 @@ public class Level
         Content = content;
     }
 
-
     public void LoadContent()
     {
-        TexturePlayer = Content.Load<Texture2D>("mobokot");
-        TexturePlatform = Content.Load<Texture2D>("test");
-        TextureBullet = Content.Load<Texture2D>("bullet");
         BackgroundImage = Content.Load<Texture2D>("Background_0");
+        TexturePlayer = Content.Load<Texture2D>("player");
+
+        TextureBullet = Content.Load<Texture2D>("bullet");
+        TextureMonster = Content.Load<Texture2D>("monster_1");
+
+        TexturePlatform = Content.Load<Texture2D>("test");
     }
 
     public void Initialize()
     {
-
-        PlatfotmCreator = new PlatfotmCreator(TexturePlatform, GraphicsDevice.Viewport);
+        GameWorld.platformCreater = new PlatfotmCreator(TexturePlatform, GraphicsDevice.Viewport);
+        GameWorld.monsterCreater = new MonsterCreator(TextureMonster, GraphicsDevice.Viewport);
 
         GameWorld.player = new Player(
             new Vector2(50, 50),
@@ -67,15 +70,18 @@ public class Level
             GraphicsDevice.Viewport,
             0.15f);
 
-        PlatfotmCreator.MakePlatform_(0.3f,
-            new Vector2(100, 800),   
-            new Vector2(200, 700),
-            new Vector2(400, 600),
-            new Vector2(600, 500),
-            new Vector2(800, 300));
+        GameWorld.platformCreater.MakePlatform_(0.3f,
+           new Vector2(100, 800),
+           new Vector2(200, 700),
+           new Vector2(400, 600),
+           new Vector2(600, 500),
+           new Vector2(800, 300));
 
-        GameWorld.GameObjects.AddRange(PlatfotmCreator.Platforms);
-        GameWorld.background = new Background(BackgroundImage, GraphicsDevice.Viewport);
+        GameWorld.monsterCreater.MakeMonster(new Vector2(500, 500), 0.4f);
+
+
+        GameWorld.GameObjects.AddRange(GameWorld.platformCreater.Platforms);
+        GameWorld.background = new Background(BackgroundImage);
     }
 
     public void Update(GameTime gameTime)

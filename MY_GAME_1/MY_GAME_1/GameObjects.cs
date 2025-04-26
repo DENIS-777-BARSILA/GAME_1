@@ -12,14 +12,12 @@ public class Background
     public readonly PositionComponent PositionComp;
     public readonly RenderComponent RenderComp;
 
-    public Background(Texture2D bacgroundImage, Viewport viewport)
+    public Background(Texture2D bacgroundImage)
     {
+        RenderComp = new RenderComponent(bacgroundImage, null, 1);
         PositionComp = new PositionComponent(Vector2.Zero, RenderComp);
-
-        RenderComp = new RenderComponent(bacgroundImage, PositionComp, 1);
+        RenderComp.PositionComp = PositionComp;
     }
-
-
 }
 
 
@@ -38,7 +36,6 @@ public class Player : IGameObject
 
 
         PositionComp = new PositionComponent(position, RenderComp);
-
 
         RenderComp.PositionComp = PositionComp;
 
@@ -86,6 +83,8 @@ public class Bullet : IGameObject
     public PhysicalComponent PhysicalComp { get; }
     public MotionComponent MotionComp { get; }
 
+
+    readonly Vector2 Direction;
     float SpeedX;
     float SpeedY;
 
@@ -98,6 +97,11 @@ public class Bullet : IGameObject
         MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, true);
         SpeedX = speedX;
         SpeedY = speedY;
+
+
+        Direction = new Vector2(speedX, speedY);
+        if (Direction != Vector2.Zero) Direction.Normalize();
+        RenderComp.Rotation = (float)Math.Atan2(Direction.Y, Direction.X);
     }
 
     public void Update()
@@ -115,6 +119,37 @@ public class Bullet : IGameObject
         PositionComp.Position = newPosition;
     }
 }
+
+public class Monster_1 : IGameObject
+{
+    public PositionComponent PositionComp { get; } = null;
+    public HealthComponent HealthComp { get; }
+    public RenderComponent RenderComp { get; } = null;
+    public MotionComponent MotionComp { get; }
+    public PhysicalComponent PhysicalComp { get; }
+
+    public Monster_1(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
+    {
+        RenderComp = new RenderComponent(texture, null, scale);
+        PositionComp = new PositionComponent(position, RenderComp);
+
+        RenderComp.PositionComp = PositionComp;
+
+        HealthComp = new HealthComponent(maxHealth, health);
+        PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
+        MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, true);
+
+        RenderComp.PositionComp = PositionComp;
+        RenderComp.MotionComp = MotionComp;
+    }
+
+    public void Update()
+    {
+        MotionComp.Update(Keyboard.GetState());
+        PhysicalComp.Update();
+    }
+}
+
 
 public interface IGameObject
 {

@@ -37,3 +37,38 @@ public class PlatfotmCreator
         }
     }
 }
+
+public class MonsterCreator
+{
+    readonly Texture2D Texture;
+    readonly Viewport Viewport;
+    public List<IGameObject> Monsters { get; private set; }
+
+    public MonsterCreator(Texture2D texture, Viewport viewport)
+    {
+        Texture = texture;
+        Viewport = viewport;
+        Monsters = new List<IGameObject>();
+    }
+
+    public void MakeMonster(Vector2 position, float scale)
+    {
+        Monster_1 newMonster = new Monster_1(position, 100, 100, Texture,
+        20, 20, Viewport, scale);
+        Monsters.Add(newMonster);
+
+       // GameWorld.GameObjects.Add(newMonster);
+    }
+
+    public void MakeMonster(float scale, params Vector2[] positions)
+    {
+        foreach (var pos in positions)
+        {
+            Monster_1 newMonster = new Monster_1(pos, 100, 100, Texture,
+        20, 20, Viewport, scale);
+            Monsters.Add(newMonster);
+
+            GameWorld.GameObjects.Add(newMonster);
+        }
+    }
+}
