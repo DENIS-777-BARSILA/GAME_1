@@ -14,11 +14,13 @@ public static class GameWorld
 {
     public static Background background;
     public static Player player;
+    public static Monster_1 Monster;
+
     public static PlatfotmCreator platformCreater;
     public static MonsterCreator monsterCreater;
 
     public static List<Bullet> Bullets = new List<Bullet>();
-    
+
     public static List<IGameObject> GameObjects = new List<IGameObject>();
     public static Level Level;
 
@@ -62,13 +64,8 @@ public class Level
         GameWorld.platformCreater = new PlatfotmCreator(TexturePlatform, GraphicsDevice.Viewport);
         GameWorld.monsterCreater = new MonsterCreator(TextureMonster, GraphicsDevice.Viewport);
 
-        GameWorld.player = new Player(
-            new Vector2(50, 50),
-            100, 100,
-            TexturePlayer,
-            10, 10,
-            GraphicsDevice.Viewport,
-            0.15f);
+        GameWorld.player = new Player(new Vector2(50, 50), 100, 100, TexturePlayer, 10, 10, GraphicsDevice.Viewport, 0.2f);
+       // GameWorld.Monster = (new Monster_1(new Vector2(150, 50), 100, 100, TextureMonster, 10, 10, GraphicsDevice.Viewport, 0.5f));
 
         GameWorld.platformCreater.MakePlatform_(0.3f,
            new Vector2(100, 800),
@@ -77,11 +74,12 @@ public class Level
            new Vector2(600, 500),
            new Vector2(800, 300));
 
-        GameWorld.monsterCreater.MakeMonster(new Vector2(500, 500), 0.4f);
+         GameWorld.monsterCreater.MakeMonster(new Vector2(400, 400), 0.5f);
+
 
 
         GameWorld.GameObjects.AddRange(GameWorld.platformCreater.Platforms);
-        GameWorld.background = new Background(BackgroundImage);
+        GameWorld.background = new Background(BackgroundImage, 2);
     }
 
     public void Update(GameTime gameTime)

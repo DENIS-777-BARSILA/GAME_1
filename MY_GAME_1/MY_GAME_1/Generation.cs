@@ -57,7 +57,7 @@ public class MonsterCreator
         20, 20, Viewport, scale);
         Monsters.Add(newMonster);
 
-       // GameWorld.GameObjects.Add(newMonster);
+     // GameWorld.GameObjects.Add(newMonster);
     }
 
     public void MakeMonster(float scale, params Vector2[] positions)

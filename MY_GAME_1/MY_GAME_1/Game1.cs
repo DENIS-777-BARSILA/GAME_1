@@ -45,7 +45,7 @@ public class Game1 : Game
         _level.Initialize();
         GameWorld.Level = _level;
 
-
+    Console.WriteLine($"Monsters count: {GameWorld.monsterCreater.Monsters.Count}");
     }
 
     protected override void Update(GameTime gameTime)
@@ -56,10 +56,18 @@ public class Game1 : Game
         GameWorld.Level.Update(gameTime);
         GameWorld.player.Update();
 
+
         for (int i = GameWorld.Bullets.Count - 1; i >= 0; i--)
         {
             GameWorld.Bullets[i].Update();
         }
+
+        for (int i = GameWorld.monsterCreater.Monsters.Count - 1; i >= 0; i--)
+        {
+            GameWorld.monsterCreater.Monsters[i].Update();
+        }
+
+     //   GameWorld.Monster.Update();
 
         base.Update(gameTime);
     }
@@ -71,41 +79,39 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-        /// 
-       // _spriteBatch.Draw(_level.BackgroundImage, new Rectangle(0, 0, _graphics.PreferredBackBufferWidth,
-       // _graphics.PreferredBackBufferHeight), Color.White);
 
-        GameWorld.background.RenderComp.Draw(_spriteBatch);
+        GameWorld.background.Draw(_spriteBatch, gameTime);
 
-        GameWorld.player.RenderComp.Draw(_spriteBatch);
-        
-        GameWorld.GameObjects.ForEach(o => o.RenderComp.Draw(_spriteBatch));
-        GameWorld.Bullets.ForEach(b => b.RenderComp.Draw(_spriteBatch));
+        GameWorld.player.Draw(_spriteBatch, gameTime);
+
+        GameWorld.GameObjects.ForEach(o => o.Draw(_spriteBatch, gameTime));
+        GameWorld.Bullets.ForEach(b => b.Draw(_spriteBatch, gameTime));
+
+        for (int i = GameWorld.monsterCreater.Monsters.Count - 1; i >= 0; i--)
+        {
+            GameWorld.monsterCreater.Monsters[i].Draw(_spriteBatch, gameTime);
+        }
+
+       // GameWorld.Monster.Draw(_spriteBatch, gameTime);
+
+
 
         ///
-
-
-
 
         Texture2D debugTexture = new Texture2D(GraphicsDevice, 1, 1);
         debugTexture.SetData(new[] { Color.Red });
 
         // хитбокс игрока
-        Rectangle playerBounds = new Rectangle(
-          (int)GameWorld.player.PositionComp.Position.X,
-          (int)GameWorld.player.PositionComp.Position.Y,
-         GameWorld.player.RenderComp.Width,
-         GameWorld.player.RenderComp.Height);
-        _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
-
+        //  Rectangle playerBounds = new Rectangle(
+        //     (int)GameWorld.player.PositionComp.Position.X,
+        //     (int)GameWorld.player.PositionComp.Position.Y,
+        //   GameWorld.player.RenderComp.Width,
+        //   GameWorld.player.RenderComp.Height);
+        //   _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
 
 
         _spriteBatch.End();
 
         base.Draw(gameTime);
-
-
-
-
     }
 }

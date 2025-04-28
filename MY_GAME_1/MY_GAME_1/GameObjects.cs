@@ -12,11 +12,16 @@ public class Background
     public readonly PositionComponent PositionComp;
     public readonly RenderComponent RenderComp;
 
-    public Background(Texture2D bacgroundImage)
+    public Background(Texture2D bacgroundImage, float scale)
     {
-        RenderComp = new RenderComponent(bacgroundImage, null, 1);
+        RenderComp = new RenderComponent(bacgroundImage, null, scale);
         PositionComp = new PositionComponent(Vector2.Zero, RenderComp);
         RenderComp.PositionComp = PositionComp;
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        RenderComp.Draw(spriteBatch, gameTime);
     }
 }
 
@@ -32,19 +37,21 @@ public class Player : IGameObject
 
     public Player(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
     {
-        RenderComp = new RenderComponent(texture, null, scale);
+        RenderComp = new RenderComponent(texture, null, scale, 1, 1, 0.1f);
 
 
         PositionComp = new PositionComponent(position, RenderComp);
 
-        RenderComp.PositionComp = PositionComp;
+
 
         HealthComp = new HealthComponent(maxHealth, health);
         PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
         MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, true);
 
-        ShootingComp = new ShootingComponent(PositionComp, 50);
+        ShootingComp = new ShootingComponent(PositionComp, RenderComp, 50);
 
+        RenderComp.PositionComp = PositionComp;
+        RenderComp.MotionComp = MotionComp;
     }
 
     public void Update()
@@ -52,6 +59,49 @@ public class Player : IGameObject
         MotionComp.Update(Keyboard.GetState());
         PhysicalComp.Update();
         ShootingComp.Update(Mouse.GetState());
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        RenderComp.Draw(spriteBatch, gameTime);
+    }
+}
+
+public class Monster_1 : IGameObject
+{
+    public PositionComponent PositionComp { get; } = null;
+    public HealthComponent HealthComp { get; }
+    public RenderComponent RenderComp { get; } = null;
+    public MotionComponent MotionComp { get; }
+    public PhysicalComponent PhysicalComp { get; }
+
+    public Monster_1(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
+    {
+        RenderComp = new RenderComponent(texture, null, scale,5, 2, 0.1f); //, 
+
+
+        PositionComp = new PositionComponent(position, RenderComp);
+
+
+
+        HealthComp = new HealthComponent(maxHealth, health);
+        PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
+        MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, false);
+
+
+        RenderComp.PositionComp = PositionComp;
+        RenderComp.MotionComp = MotionComp;
+    }
+
+    public void Update()
+    {
+        MotionComp.Update(Keyboard.GetState());
+       PhysicalComp.Update();
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        RenderComp.Draw(spriteBatch, gameTime);
     }
 }
 
@@ -72,6 +122,11 @@ public class Platform_1 : IGameObject
     public void Update()
     {
 
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        RenderComp.Draw(spriteBatch, gameTime);
     }
 }
 
@@ -94,7 +149,7 @@ public class Bullet : IGameObject
         PositionComp = new PositionComponent(position, RenderComp);
         RenderComp.PositionComp = PositionComp;
         PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
-        MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, true);
+        MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, false);
         SpeedX = speedX;
         SpeedY = speedY;
 
@@ -118,37 +173,14 @@ public class Bullet : IGameObject
 
         PositionComp.Position = newPosition;
     }
-}
 
-public class Monster_1 : IGameObject
-{
-    public PositionComponent PositionComp { get; } = null;
-    public HealthComponent HealthComp { get; }
-    public RenderComponent RenderComp { get; } = null;
-    public MotionComponent MotionComp { get; }
-    public PhysicalComponent PhysicalComp { get; }
-
-    public Monster_1(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        RenderComp = new RenderComponent(texture, null, scale);
-        PositionComp = new PositionComponent(position, RenderComp);
-
-        RenderComp.PositionComp = PositionComp;
-
-        HealthComp = new HealthComponent(maxHealth, health);
-        PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
-        MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, true);
-
-        RenderComp.PositionComp = PositionComp;
-        RenderComp.MotionComp = MotionComp;
-    }
-
-    public void Update()
-    {
-        MotionComp.Update(Keyboard.GetState());
-        PhysicalComp.Update();
+        RenderComp.Draw(spriteBatch, gameTime);
     }
 }
+
+
 
 
 public interface IGameObject
@@ -158,6 +190,7 @@ public interface IGameObject
     PhysicalComponent PhysicalComp { get; }
 
     void Update();
+    void Draw(SpriteBatch spriteBatch, GameTime gameTime);
 }
 
 

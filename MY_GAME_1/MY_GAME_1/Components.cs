@@ -81,25 +81,22 @@ public class RenderComponent
     public MotionComponent MotionComp;
 
     public float Rotation { get; set; }
-    public float Scale
+    public float Scale = 1;
+
+
+    public int Width
     {
-        get => scale;
-        set
-        {
-            scale = value;
-            Width = (int)(texture.Width * scale);
-            Height = (int)(texture.Height * scale);
-        }
+        get => (int)(frameWidth * Scale);
     }
 
-    public int Width { get; private set; }
-    public int Height { get; private set; }
+    public int Height
+    {
+        get => (int)(frameHeight * Scale);
+    }
 
-    private int height;
-    private int width;
-    private float scale = 1.0f;
+    public SpriteEffects SpriteEffect { get; private set; } = SpriteEffects.None;
 
-
+    private bool isAnimation;
     private readonly int frameWidth;
     private readonly int frameHeight;
     private int countFrameX = 1;
@@ -107,6 +104,13 @@ public class RenderComponent
     private int frameX = 0;
     private int frameY = 0;
 
+    private float timeSinceLastFrame = 0f;
+    private float frameTime = 0.1f;
+    public float FrameTime
+    {
+        get => frameTime;
+        set => frameTime = value;
+    }
     private Rectangle currentFrame;
 
     public RenderComponent(Texture2D texture, PositionComponent positionComp, float scale)  //without animation
@@ -114,68 +118,70 @@ public class RenderComponent
         this.texture = texture;
         PositionComp = positionComp;
 
-        height = texture.Height;
-        width = texture.Width;
-
         this.Scale = scale;
 
-        frameWidth = width;
-        frameHeight = height;
-        currentFrame = new Rectangle(0, 0, width, height);
+        isAnimation = false;
+        frameWidth = texture.Width;
+        frameHeight = texture.Height;
+        currentFrame = new Rectangle(0, 0, texture.Width, texture.Height);
     }
 
     public RenderComponent(Texture2D texture, PositionComponent positionComp,
-     float scale, int countFrameX, int countFrameY) //with animation 
+     float scale, int countFrameX, int countFrameY, float frameTime) //with animation 
     {
         this.texture = texture;
 
         PositionComp = positionComp;
 
-        height = texture.Height;
-        width = texture.Width;
-
         this.Scale = scale;
 
+        isAnimation = true;
         this.countFrameX = countFrameX;
         this.countFrameY = countFrameY;
 
-        frameWidth = width / countFrameX;
-        frameHeight = height / countFrameY;
+        frameWidth = texture.Width / countFrameX;
+        frameHeight = texture.Height / countFrameY;
 
         currentFrame = new Rectangle(0, 0, frameWidth, frameHeight);
+        this.frameTime = frameTime;
     }
 
-    private void UpdateCurrentFrame()
+    private void UpdateCurrentFrame(GameTime gameTime)
     {
-        if (!IsCorrect())
-            return;
+        timeSinceLastFrame += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        if (MotionComp.ISMotion)
+        if (timeSinceLastFrame >= frameTime && MotionComp.SideMoion != Side.None)
         {
-            frameX = (frameX + 1);
-            if (frameX > countFrameX)
+            timeSinceLastFrame = 0f;
+
+            frameX = (frameX + 1) % countFrameX;
+            if (frameX == 0)
             {
-                frameX = frameX % countFrameX;
                 frameY = (frameY + 1) % countFrameY;
             }
+
+            if (MotionComp.SideMoion == Side.Left)
+                SpriteEffect = SpriteEffects.FlipHorizontally;
+            else
+                SpriteEffect = SpriteEffects.None;
         }
 
-        else
-            frameX = 0;
+        else if (MotionComp.SideMoion == Side.None)
+        {
+            frameX = 0; frameY = 0;
+        }
 
         currentFrame = new Rectangle(
-            frameX * frameWidth,
-            frameY * frameHeight,
-            frameWidth,
-            frameHeight
-        );
+                frameX * frameWidth,
+                frameY * frameHeight,
+                frameWidth,
+                frameHeight);
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        if (!IsCorrect())
-            return;
-        UpdateCurrentFrame();
+        if (isAnimation && IsCorrectForAnimation())
+            UpdateCurrentFrame(gameTime);
 
         spriteBatch.Draw(
             texture,
@@ -183,16 +189,13 @@ public class RenderComponent
             currentFrame,
             Color.White,
             Rotation,
-             Vector2.Zero,
-            scale,
-            SpriteEffects.None,
+            Vector2.Zero,
+            Scale,
+            SpriteEffect,
             0f);
-
-
-        Console.WriteLine($"Drawing frame: X={frameX}, Y={frameY}");
     }
 
-    private bool IsCorrect()
+    private bool IsCorrectForAnimation()
     {
         return PositionComp != null && MotionComp != null;
     }
@@ -422,6 +425,7 @@ public class PhysicalComponent
     {
         ColisionData collisionData = GetCollisionSide(newPosition);
 
+
         if (collisionData.Side == Side.None)
         {
             PositionComp.Position = newPosition;
@@ -485,7 +489,7 @@ public class MotionComponent
     public float JumpHeight = -195;
     private float JumpSpeed = 0f;
     public bool IsJumping { get; private set; }
-    public bool ISMotion { get; private set; }
+    public Side SideMoion { get; private set; }
 
 
     public readonly bool IsKeyboardOperation;
@@ -504,7 +508,7 @@ public class MotionComponent
 
     public void Update(KeyboardState keyboardState)
     {
-        ISMotion = false;
+        SideMoion = Side.None;
 
         if (IsKeyboardOperation)
             KeybordMotion(keyboardState);
@@ -521,7 +525,7 @@ public class MotionComponent
                 JumpSpeed = 0f;
             }
         }
-        Console.WriteLine($"IsMotion: {ISMotion}");
+
     }
 
     public void Update()
@@ -536,13 +540,15 @@ public class MotionComponent
         if (keyboardState.IsKeyDown(Keys.Left))
         {
             Vector2 newPosition = PositionComp.Position - new Vector2(SpeedX, 0);
-            ISMotion = PhysicalComp.Move(newPosition);
+            if (PhysicalComp.Move(newPosition))
+                SideMoion = Side.Left;
         }
 
         if (keyboardState.IsKeyDown(Keys.Right))
         {
             Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, 0);
-            ISMotion = PhysicalComp.Move(newPosition);
+            if (PhysicalComp.Move(newPosition))
+                SideMoion = Side.Right;
         }
 
         if (keyboardState.IsKeyDown(Keys.Space))
@@ -553,8 +559,9 @@ public class MotionComponent
 
     private void Move(Vector2 newPosition)
     {
-        ISMotion = PhysicalComp.Move(new Vector2(newPosition.X, 0));
-        ISMotion = PhysicalComp.Move(new Vector2(0, newPosition.Y));
+        if (PhysicalComp.Move(new Vector2(newPosition.X, 0))) ;
+        SideMoion = Math.Sign(newPosition.X) > 0 ? Side.Right : Side.Left;
+        // SideMoion = PhysicalComp.Move(new Vector2(0, newPosition.Y));
     }
 
     private void Jump()
@@ -572,14 +579,17 @@ public class ShootingComponent
 {
     private PositionComponent PositionComp;
 
+    private RenderComponent RenderComp;
+
     public readonly float Speed = 1;
 
     private float _lastShotTime;
     private const float ShotDelay = 0.5f;
 
-    public ShootingComponent(PositionComponent positionComp, float speed)
+    public ShootingComponent(PositionComponent positionComp, RenderComponent renderComp, float speed)
     {
         PositionComp = positionComp;
+        RenderComp = renderComp;
         Speed = speed;
     }
 
@@ -602,7 +612,11 @@ public class ShootingComponent
     public void MakeBullet(MouseState mouseState)
     {
         Vector2 target = new Vector2(mouseState.X, mouseState.Y);
-        Vector2 gunPosition = new Vector2(PositionComp.Position.X + PositionComp.Width / 2, PositionComp.Position.Y + PositionComp.Height / 2);
+
+        Vector2 gunPosition = new Vector2(PositionComp.Position.X + PositionComp.Width / 2, PositionComp.Position.Y + PositionComp.Height / 3);
+        if (RenderComp.SpriteEffect == SpriteEffects.FlipHorizontally)
+            gunPosition.X = PositionComp.Position.X;
+
 
         Vector2 direction = target - gunPosition;
         direction = Vector2.Normalize(direction);
@@ -610,7 +624,7 @@ public class ShootingComponent
         GameWorld.Bullets.Add(new Bullet(gunPosition, GameWorld.Level.TextureBullet, GameWorld.viewport, 0.1f,
          direction.X * Speed, direction.Y * Speed));
 
-        Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
+        // Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
     }
 
 }
