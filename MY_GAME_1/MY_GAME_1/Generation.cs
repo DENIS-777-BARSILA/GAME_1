@@ -36,6 +36,14 @@ public class PlatfotmCreator
             Platforms.Add(newPlatform);
         }
     }
+
+    public void Draw( SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        for (int i = Platforms.Count - 1; i >= 0; i--)
+        {
+           Platforms[i].Draw(spriteBatch, gameTime);
+        }
+    }
 }
 
 public class MonsterCreator
@@ -51,7 +59,7 @@ public class MonsterCreator
         Monsters = new List<IGameObject>();
     }
 
-    public void MakeMonster(Vector2 position, float scale)
+    public void MakeMonster( float scale, Vector2 position)
     {
         Monster_1 newMonster = new Monster_1(position, 100, 100, Texture,
         20, 20, Viewport, scale);
@@ -68,7 +76,23 @@ public class MonsterCreator
         20, 20, Viewport, scale);
             Monsters.Add(newMonster);
 
-            GameWorld.GameObjects.Add(newMonster);
+          //  GameWorld.GameObjects.Add(newMonster);
+        }
+    }
+
+    public void Update()
+    {
+        for (int i = Monsters.Count - 1; i >= 0; i--)
+        {
+           Monsters[i].Update();
+        }
+    }
+
+    public void Draw( SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        for (int i = Monsters.Count - 1; i >= 0; i--)
+        {
+           Monsters[i].Draw(spriteBatch, gameTime);
         }
     }
 }

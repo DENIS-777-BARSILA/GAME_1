@@ -12,26 +12,30 @@ namespace MY_GAME_1;
 
 public static class GameWorld
 {
-    public static Background background;
-    public static Player player;
-    public static Monster_1 Monster;
+    public static GraphicsDevice GraphicsDevice;
+    public static ContentManager Content;
+    public static GameTime GameTime;
+    public static SpriteBatch _spriteBatch;
 
-    public static PlatfotmCreator platformCreater;
-    public static MonsterCreator monsterCreater;
 
-    public static List<Bullet> Bullets = new List<Bullet>();
-
-    public static List<IGameObject> GameObjects = new List<IGameObject>();
-    public static Level Level;
+    public static Action Update;
+    public static Action<GameTime> Draw;
 
     public static Viewport viewport;
+
+    public static Background background;
+    public static Player player;
+
+
+    public static List<Bullet> Bullets = new List<Bullet>();
+    public static List<IGameObject> GameObjects = new List<IGameObject>();
+
+    public static Level Level;
 }
 
 public class Level
 {
-    private GraphicsDevice GraphicsDevice;
-    private readonly ContentManager Content;
-    public GameTime GameTime { get; set; }
+
 
     public Texture2D BackgroundImage { get; private set; }
     public Texture2D TexturePlayer { get; private set; }
@@ -42,49 +46,62 @@ public class Level
 
     public Texture2D TextureMonster { get; private set; }
 
+
+    public PlatfotmCreator platformCreator { get; private set; }
+    public MonsterCreator monsterCreator { get; private set; }
+
     public Level(GraphicsDevice graphicsDevice, ContentManager content)
     {
-        GraphicsDevice = graphicsDevice;
-        Content = content;
+        GameWorld.GraphicsDevice = graphicsDevice;
+        GameWorld.Content = content;
     }
 
     public void LoadContent()
     {
-        BackgroundImage = Content.Load<Texture2D>("Background_0");
-        TexturePlayer = Content.Load<Texture2D>("player");
+        BackgroundImage = GameWorld.Content.Load<Texture2D>("Background_0");
+        TexturePlayer = GameWorld.Content.Load<Texture2D>("player");
 
-        TextureBullet = Content.Load<Texture2D>("bullet");
-        TextureMonster = Content.Load<Texture2D>("monster_1");
+        TextureBullet = GameWorld.Content.Load<Texture2D>("bullet");
+        TextureMonster = GameWorld.Content.Load<Texture2D>("monster_1");
 
-        TexturePlatform = Content.Load<Texture2D>("test");
+        TexturePlatform = GameWorld.Content.Load<Texture2D>("test");
     }
 
     public void Initialize()
     {
-        GameWorld.platformCreater = new PlatfotmCreator(TexturePlatform, GraphicsDevice.Viewport);
-        GameWorld.monsterCreater = new MonsterCreator(TextureMonster, GraphicsDevice.Viewport);
+        platformCreator = new PlatfotmCreator(TexturePlatform, GameWorld.GraphicsDevice.Viewport);
+        monsterCreator = new MonsterCreator(TextureMonster, GameWorld.GraphicsDevice.Viewport);
 
-        GameWorld.player = new Player(new Vector2(50, 50), 100, 100, TexturePlayer, 10, 10, GraphicsDevice.Viewport, 0.2f);
-       // GameWorld.Monster = (new Monster_1(new Vector2(150, 50), 100, 100, TextureMonster, 10, 10, GraphicsDevice.Viewport, 0.5f));
+        GameWorld.player = new Player(new Vector2(50, 50), 100, 100, TexturePlayer, 10, 10, GameWorld.GraphicsDevice.Viewport, 0.2f);
 
-        GameWorld.platformCreater.MakePlatform_(0.3f,
+        platformCreator.MakePlatform_(0.3f,
            new Vector2(100, 800),
            new Vector2(200, 700),
            new Vector2(400, 600),
            new Vector2(600, 500),
            new Vector2(800, 300));
 
-         GameWorld.monsterCreater.MakeMonster(new Vector2(400, 400), 0.5f);
+        monsterCreator.MakeMonster(0.5f, new Vector2(400, 400), new Vector2(700, 400));
 
-
-
-        GameWorld.GameObjects.AddRange(GameWorld.platformCreater.Platforms);
+        GameWorld.GameObjects.AddRange(platformCreator.Platforms);
         GameWorld.background = new Background(BackgroundImage, 2);
+
+
+        GameWorld.Update += () => monsterCreator.Update();
+        GameWorld.Update += () => GameWorld.player.Update();
+        GameWorld.Update += () => Bullet.Update(GameWorld.Bullets);
+
+        GameWorld.Draw += (gameTime) => GameWorld.background.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
+        GameWorld.Draw += (gameTime) => GameWorld.player.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
+        GameWorld.Draw += (gameTime) => monsterCreator.Draw(GameWorld._spriteBatch, gameTime);
+        GameWorld.Draw += (gameTime) => platformCreator.Draw(GameWorld._spriteBatch, gameTime);
     }
 
-    public void Update(GameTime gameTime)
+
+
+    public void Update()
     {
-        GameTime = gameTime;
+
     }
 
 }

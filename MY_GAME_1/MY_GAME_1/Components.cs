@@ -599,7 +599,7 @@ public class ShootingComponent
 
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
-            float currentTime = (float)GameWorld.Level.GameTime.TotalGameTime.TotalSeconds;
+            float currentTime = (float)GameWorld.GameTime.TotalGameTime.TotalSeconds;
             if (currentTime - _lastShotTime > ShotDelay)
             {
                 MakeBullet(mouseState);

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Components;
+using System.Collections.Generic;
 
 namespace MY_GAME_1;
 
@@ -173,6 +174,15 @@ public class Bullet : IGameObject
 
         PositionComp.Position = newPosition;
     }
+
+    public static void  Update(List<Bullet> bullets)
+    {
+        for (int i = bullets.Count - 1; i >= 0; i--)
+        {
+            bullets[i].Update();
+        }
+    }
+
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {

@@ -10,7 +10,6 @@ using System.Linq;
 namespace MY_GAME_1;
 
 
-
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
@@ -32,7 +31,6 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
-
         base.Initialize();
     }
 
@@ -40,12 +38,11 @@ public class Game1 : Game
     {
         GameWorld.viewport = GraphicsDevice.Viewport;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        GameWorld._spriteBatch = _spriteBatch;
         _level = new Level(GraphicsDevice, Content);
         _level.LoadContent();
         _level.Initialize();
         GameWorld.Level = _level;
-
-    Console.WriteLine($"Monsters count: {GameWorld.monsterCreater.Monsters.Count}");
     }
 
     protected override void Update(GameTime gameTime)
@@ -53,25 +50,9 @@ public class Game1 : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        GameWorld.Level.Update(gameTime);
-        GameWorld.player.Update();
-
-
-        for (int i = GameWorld.Bullets.Count - 1; i >= 0; i--)
-        {
-            GameWorld.Bullets[i].Update();
-        }
-
-        for (int i = GameWorld.monsterCreater.Monsters.Count - 1; i >= 0; i--)
-        {
-            GameWorld.monsterCreater.Monsters[i].Update();
-        }
-
-     //   GameWorld.Monster.Update();
-
-        base.Update(gameTime);
+        GameWorld.GameTime = gameTime;
+        GameWorld.Update();
     }
-
 
     protected override void Draw(GameTime gameTime)
     {
@@ -79,24 +60,12 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-
-        GameWorld.background.Draw(_spriteBatch, gameTime);
-
-        GameWorld.player.Draw(_spriteBatch, gameTime);
-
-        GameWorld.GameObjects.ForEach(o => o.Draw(_spriteBatch, gameTime));
+        GameWorld.Draw(gameTime); 
+       
         GameWorld.Bullets.ForEach(b => b.Draw(_spriteBatch, gameTime));
 
-        for (int i = GameWorld.monsterCreater.Monsters.Count - 1; i >= 0; i--)
-        {
-            GameWorld.monsterCreater.Monsters[i].Draw(_spriteBatch, gameTime);
-        }
-
-       // GameWorld.Monster.Draw(_spriteBatch, gameTime);
 
 
-
-        ///
 
         Texture2D debugTexture = new Texture2D(GraphicsDevice, 1, 1);
         debugTexture.SetData(new[] { Color.Red });
@@ -108,7 +77,6 @@ public class Game1 : Game
         //   GameWorld.player.RenderComp.Width,
         //   GameWorld.player.RenderComp.Height);
         //   _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
-
 
         _spriteBatch.End();
 
