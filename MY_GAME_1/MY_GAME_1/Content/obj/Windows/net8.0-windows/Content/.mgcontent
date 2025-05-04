@@ -4,13 +4,13 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png</File>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png</File>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png</File>
+    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
+    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png</File>
+    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
+    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png</File>
+    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
+    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
+    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

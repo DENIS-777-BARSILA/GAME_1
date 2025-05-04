@@ -6,7 +6,7 @@ using Components;
 using MY_GAME_1;
 using System.Collections.Generic;
 
-
+  
 namespace MY_GAME_1;
 
 public class PlatfotmCreator

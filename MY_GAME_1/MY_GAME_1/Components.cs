@@ -483,9 +483,22 @@ public class PhysicalComponent
 
 public class MotionComponent
 {
-    public float SpeedX;
+    public float MaxSpeedX { get; private set; }
+    public float MaxSpeedY { get; private set; }
 
-    public float SpeedY;
+    private float _speedX;
+    public float SpeedX
+    {
+        get => _speedX;
+        set => _speedX = Math.Clamp(value, -MaxSpeedX, MaxSpeedX);
+    }
+    private float _speedY;
+    public float SpeedY
+    {
+        get => _speedY;
+        set => _speedY = Math.Clamp(value, -MaxSpeedY, MaxSpeedY);
+    }
+
     public float JumpHeight = -195;
     private float JumpSpeed = 0f;
     public bool IsJumping { get; private set; }
@@ -499,8 +512,8 @@ public class MotionComponent
 
     public MotionComponent(float speedX, float speedY, PositionComponent positionComp, PhysicalComponent physicalComp, bool isKeyboardOperation)
     {
-        SpeedX = speedX;
-        SpeedY = speedY;
+        MaxSpeedX = speedX;
+        MaxSpeedY = speedY;
         PositionComp = positionComp;
         PhysicalComp = physicalComp;
         IsKeyboardOperation = isKeyboardOperation;
@@ -513,6 +526,23 @@ public class MotionComponent
         if (IsKeyboardOperation)
             KeybordMotion(keyboardState);
 
+
+        UpdateJump();
+    }
+
+    public void Update(Vector2 speed, bool jump)
+    {
+        SpeedY = speed.Y;
+        SpeedX = speed.X;
+
+        Move(new Vector2(SpeedX, SpeedY));
+        if (jump)
+            Jump();
+        UpdateJump();
+    }
+
+    private void UpdateJump()
+    {
         if (IsJumping)
         {
             JumpSpeed += PhysicalComponent.Gravity;
@@ -525,13 +555,6 @@ public class MotionComponent
                 JumpSpeed = 0f;
             }
         }
-
-    }
-
-    public void Update()
-    {
-        Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, SpeedY);
-        Move(newPosition);
     }
 
 
@@ -539,19 +562,19 @@ public class MotionComponent
     {
         if (keyboardState.IsKeyDown(Keys.Left))
         {
-            Vector2 newPosition = PositionComp.Position - new Vector2(SpeedX, 0);
+            Vector2 newPosition = PositionComp.Position - new Vector2(MaxSpeedX, 0);
             if (PhysicalComp.Move(newPosition))
                 SideMoion = Side.Left;
         }
 
         if (keyboardState.IsKeyDown(Keys.Right))
         {
-            Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, 0);
+            Vector2 newPosition = PositionComp.Position + new Vector2(MaxSpeedX, 0);
             if (PhysicalComp.Move(newPosition))
                 SideMoion = Side.Right;
         }
 
-        if (keyboardState.IsKeyDown(Keys.Space))
+        if (keyboardState.IsKeyDown(Keys.Up))
             Jump();
 
 
@@ -559,9 +582,13 @@ public class MotionComponent
 
     private void Move(Vector2 newPosition)
     {
-        if (PhysicalComp.Move(new Vector2(newPosition.X, 0))) ;
-        SideMoion = Math.Sign(newPosition.X) > 0 ? Side.Right : Side.Left;
-        // SideMoion = PhysicalComp.Move(new Vector2(0, newPosition.Y));
+        bool movedX = PhysicalComp.Move(PositionComp.Position + new Vector2(newPosition.X, 0));
+        bool movedY = PhysicalComp.Move(PositionComp.Position + new Vector2(0, newPosition.Y));
+
+        if (movedX)
+            SideMoion = newPosition.X > 0 ? Side.Right : Side.Left;
+        else
+            SideMoion = Side.None;
     }
 
     private void Jump()
@@ -626,5 +653,36 @@ public class ShootingComponent
 
         // Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
     }
+
+}
+
+
+public class AutoMotionComponent
+{
+    private PositionComponent PositionComp;
+
+    private RenderComponent RenderComp;
+
+    private MotionComponent MotionComp;
+
+    private readonly Player player;
+
+    private bool IsJump;
+    private int CurrentSpeedX;
+
+
+
+    public AutoMotionComponent(PositionComponent positionComp, RenderComponent renderComp)
+    {
+        player = GameWorld.player;
+    }
+
+
+    public void Update(MouseState mouseState)
+    {
+
+    }
+
+
 
 }

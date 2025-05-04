@@ -78,7 +78,7 @@ public class Monster_1 : IGameObject
 
     public Monster_1(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
     {
-        RenderComp = new RenderComponent(texture, null, scale,5, 2, 0.1f); //, 
+        RenderComp = new RenderComponent(texture, null, scale, 5, 2, 0.1f); //, 
 
 
         PositionComp = new PositionComponent(position, RenderComp);
@@ -96,15 +96,20 @@ public class Monster_1 : IGameObject
 
     public void Update()
     {
-        MotionComp.Update(Keyboard.GetState());
-       PhysicalComp.Update();
+        Console.WriteLine($"{PositionComp.Position.X}  {PositionComp.Position.Y}");
+        MotionComp.Update(new Vector2(1, 0), true);
+        PhysicalComp.Update();
+
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         RenderComp.Draw(spriteBatch, gameTime);
     }
+
+
 }
+
 
 public class Platform_1 : IGameObject
 {
@@ -175,7 +180,7 @@ public class Bullet : IGameObject
         PositionComp.Position = newPosition;
     }
 
-    public static void  Update(List<Bullet> bullets)
+    public static void Update(List<Bullet> bullets)
     {
         for (int i = bullets.Count - 1; i >= 0; i--)
         {

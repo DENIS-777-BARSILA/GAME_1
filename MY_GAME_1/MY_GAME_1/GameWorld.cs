@@ -81,7 +81,7 @@ public class Level
            new Vector2(600, 500),
            new Vector2(800, 300));
 
-        monsterCreator.MakeMonster(0.5f, new Vector2(400, 400), new Vector2(700, 400));
+        monsterCreator.MakeMonster(0.5f, new Vector2(200, 200)); //new Vector2(700, 400));
 
         GameWorld.GameObjects.AddRange(platformCreator.Platforms);
         GameWorld.background = new Background(BackgroundImage, 2);
