@@ -228,13 +228,13 @@ public class PhysicalComponent
     private List<IGameObject> GameObjects;
     private readonly Viewport Viewport;
 
-    public static readonly float Gravity = 6;
+    public const float Gravity = 6;
 
     public PhysicalComponent(PositionComponent positionComp, RenderComponent renderComp)
     {
         PositionComp = positionComp;
         RenderComp = renderComp;
-        GameObjects = GameWorld.GameObjects;
+        GameObjects = GameWorld.ColisionObjects;
         Viewport = GameWorld.viewport;
     }
 
@@ -273,7 +273,7 @@ public class PhysicalComponent
 
         ColisionData viewportCollision = GetViewportCollisions(newBounds, direction);
 
-        return GetNearestCollision(objectCollision, viewportCollision);
+        return  GetNearestCollision(objectCollision, viewportCollision);
     }
 
     public ColisionData GetObjectCollisions(Rectangle newBounds, Vector2 direction)
@@ -282,7 +282,7 @@ public class PhysicalComponent
 
         foreach (var obj in GameObjects)
         {
-            if (obj == this) continue;
+            if (obj.PositionComp == this.PositionComp) continue;
 
             Rectangle otherBounds = new Rectangle(
                 (int)obj.PositionComp.Position.X,
@@ -483,9 +483,22 @@ public class PhysicalComponent
 
 public class MotionComponent
 {
-    public float SpeedX;
+    public float MaxSpeedX { get; private set; }
+    public float MaxSpeedY { get; private set; }
 
-    public float SpeedY;
+    private float _speedX;
+    public float SpeedX
+    {
+        get => _speedX;
+        set => _speedX = Math.Clamp(value, -MaxSpeedX, MaxSpeedX);
+    }
+    private float _speedY;
+    public float SpeedY
+    {
+        get => _speedY;
+        set => _speedY = Math.Clamp(value, -MaxSpeedY, MaxSpeedY);
+    }
+
     public float JumpHeight = -195;
     private float JumpSpeed = 0f;
     public bool IsJumping { get; private set; }
@@ -497,10 +510,10 @@ public class MotionComponent
     private PositionComponent PositionComp;
     private PhysicalComponent PhysicalComp;
 
-    public MotionComponent(float speedX, float speedY, PositionComponent positionComp, PhysicalComponent physicalComp, bool isKeyboardOperation)
+    public MotionComponent(float maxSpeedX, float maxSpeedY, PositionComponent positionComp, PhysicalComponent physicalComp, bool isKeyboardOperation)
     {
-        SpeedX = speedX;
-        SpeedY = speedY;
+        MaxSpeedX = maxSpeedX;
+        MaxSpeedY = maxSpeedY;
         PositionComp = positionComp;
         PhysicalComp = physicalComp;
         IsKeyboardOperation = isKeyboardOperation;
@@ -513,6 +526,28 @@ public class MotionComponent
         if (IsKeyboardOperation)
             KeybordMotion(keyboardState);
 
+
+        UpdateJump();
+    }
+
+    public void Update()
+    {
+        UpdateJump();
+    }
+
+    public void Update(Vector2 speed, bool jump)
+    {
+        SpeedY = speed.Y;
+        SpeedX = speed.X;
+
+        Move(new Vector2(SpeedX, SpeedY));
+        if (jump)
+            Jump();
+        UpdateJump();
+    }
+
+    private void UpdateJump()
+    {
         if (IsJumping)
         {
             JumpSpeed += PhysicalComponent.Gravity;
@@ -525,13 +560,6 @@ public class MotionComponent
                 JumpSpeed = 0f;
             }
         }
-
-    }
-
-    public void Update()
-    {
-        Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, SpeedY);
-        Move(newPosition);
     }
 
 
@@ -539,32 +567,47 @@ public class MotionComponent
     {
         if (keyboardState.IsKeyDown(Keys.Left))
         {
-            Vector2 newPosition = PositionComp.Position - new Vector2(SpeedX, 0);
+            Vector2 newPosition = PositionComp.Position - new Vector2(MaxSpeedX, 0);
             if (PhysicalComp.Move(newPosition))
                 SideMoion = Side.Left;
         }
 
         if (keyboardState.IsKeyDown(Keys.Right))
         {
-            Vector2 newPosition = PositionComp.Position + new Vector2(SpeedX, 0);
+            Vector2 newPosition = PositionComp.Position + new Vector2(MaxSpeedX, 0);
             if (PhysicalComp.Move(newPosition))
                 SideMoion = Side.Right;
         }
 
-        if (keyboardState.IsKeyDown(Keys.Space))
+        if (keyboardState.IsKeyDown(Keys.Up))
             Jump();
 
 
     }
 
-    private void Move(Vector2 newPosition)
+    public void Move(Vector2 newPosition)
     {
-        if (PhysicalComp.Move(new Vector2(newPosition.X, 0))) ;
-        SideMoion = Math.Sign(newPosition.X) > 0 ? Side.Right : Side.Left;
-        // SideMoion = PhysicalComp.Move(new Vector2(0, newPosition.Y));
+        bool movedX = PhysicalComp.Move(PositionComp.Position + new Vector2(newPosition.X, 0));
+
+        if (movedX)
+            SideMoion = newPosition.X > 0 ? Side.Right : Side.Left;
+        else
+            SideMoion = Side.None;
     }
 
-    private void Jump()
+    public void Move(Side side)
+    {
+        if (side == Side.None)
+            return;
+        float curspeed = side == Side.Right ? MaxSpeedX : MaxSpeedX * -1;
+
+
+        bool movedX = PhysicalComp.Move(PositionComp.Position + new Vector2(curspeed, 0));
+
+        SideMoion = side;
+    }
+
+    public void Jump()
     {
         if (!IsJumping && PhysicalComp.IsGrounded())
         {
@@ -627,4 +670,59 @@ public class ShootingComponent
         // Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
     }
 
+}
+
+
+public class AutoMotionComponent
+{
+    private PositionComponent PositionComp;
+
+    private RenderComponent RenderComp;
+
+    private MotionComponent MotionComp;
+
+    private readonly Player player;
+
+    private bool IsJump = false;
+    private Side CurrentDirection = Side.None;
+
+
+
+    public AutoMotionComponent(PositionComponent positionComp, RenderComponent renderComp, MotionComponent motionComp)
+    {
+        player = GameWorld.player;
+
+        PositionComp = positionComp;
+        RenderComp = renderComp;
+        MotionComp = motionComp;
+    }
+
+    private void CalculateMotion()
+    {
+        const int coeffForMotion = 5;
+        const int coeffForJump = 50;
+
+        float DistanceToPlayer = PositionComp.Position.X - player.PositionComp.Position.X;
+
+
+        if (Math.Abs(DistanceToPlayer) < coeffForMotion)
+            CurrentDirection = Side.None;
+        else if (DistanceToPlayer < 0)
+            CurrentDirection = Side.Right;
+        else
+            CurrentDirection = Side.Left;
+
+
+        if (PositionComp.Position.Y - player.PositionComp.Position.Y > coeffForJump && DistanceToPlayer < coeffForJump)
+            IsJump = true;
+        else
+            IsJump = false;
+    }
+
+    public void Update()
+    {
+        CalculateMotion();
+        MotionComp.Move(CurrentDirection);
+        if (IsJump) MotionComp.Jump();
+    }
 }

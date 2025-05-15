@@ -1,0 +1,20 @@
+{
+  "BackgroundTexture": "Background_0",
+  "PlayerTexture": "player",
+  "BulletTexture": "bullet",
+  "MonsterTexture": "monster_1",
+  "PlatformTextures": {
+    "1": "platform_1",
+    "2": "platform_2",
+    "3": "platform_1"
+  },
+  "Monsters": [
+    { "TileX": 2, "TileY": 2 },
+    { "TileX": 8, "TileY": 8 }
+  ],
+  "PlayerStartPosition": {
+    "TileX": 12,
+    "TileY": 12
+  },
+  "TileMapFile": "Level_Map_1.txt"
+}

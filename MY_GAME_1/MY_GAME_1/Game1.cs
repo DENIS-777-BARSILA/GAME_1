@@ -39,7 +39,7 @@ public class Game1 : Game
         GameWorld.viewport = GraphicsDevice.Viewport;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         GameWorld._spriteBatch = _spriteBatch;
-        _level = new Level(GraphicsDevice, Content);
+        _level = new Level(GraphicsDevice, Content, "Levels/Level_1.json");
         _level.LoadContent();
         _level.Initialize();
         GameWorld.Level = _level;
@@ -60,12 +60,9 @@ public class Game1 : Game
 
         _spriteBatch.Begin();
 
-        GameWorld.Draw(gameTime); 
-       
+        GameWorld.Draw(gameTime);
+
         GameWorld.Bullets.ForEach(b => b.Draw(_spriteBatch, gameTime));
-
-
-
 
         Texture2D debugTexture = new Texture2D(GraphicsDevice, 1, 1);
         debugTexture.SetData(new[] { Color.Red });

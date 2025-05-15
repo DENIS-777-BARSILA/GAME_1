@@ -75,10 +75,13 @@ public class Monster_1 : IGameObject
     public RenderComponent RenderComp { get; } = null;
     public MotionComponent MotionComp { get; }
     public PhysicalComponent PhysicalComp { get; }
+    public AutoMotionComponent AutoMotionComp { get; }
 
-    public Monster_1(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
+
+
+    public Monster_1(Vector2 position, int health, int maxHealth, Texture2D texture, float maxSpeedX, float maxSpeedY, Viewport viewport, float scale)
     {
-        RenderComp = new RenderComponent(texture, null, scale,5, 2, 0.1f); //, 
+        RenderComp = new RenderComponent(texture, null, scale, 5, 2, 0.1f);
 
 
         PositionComp = new PositionComponent(position, RenderComp);
@@ -87,8 +90,9 @@ public class Monster_1 : IGameObject
 
         HealthComp = new HealthComponent(maxHealth, health);
         PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
-        MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, false);
+        MotionComp = new MotionComponent(maxSpeedX, maxSpeedY, PositionComp, PhysicalComp, false);
 
+        AutoMotionComp = new AutoMotionComponent(PositionComp, RenderComp, MotionComp);
 
         RenderComp.PositionComp = PositionComp;
         RenderComp.MotionComp = MotionComp;
@@ -96,15 +100,20 @@ public class Monster_1 : IGameObject
 
     public void Update()
     {
-        MotionComp.Update(Keyboard.GetState());
-       PhysicalComp.Update();
+        Console.WriteLine($"{PositionComp.Position.X}  {PositionComp.Position.Y}");
+        AutoMotionComp.Update();
+        MotionComp.Update();
+        PhysicalComp.Update();
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
         RenderComp.Draw(spriteBatch, gameTime);
     }
+
+
 }
+
 
 public class Platform_1 : IGameObject
 {
@@ -175,7 +184,7 @@ public class Bullet : IGameObject
         PositionComp.Position = newPosition;
     }
 
-    public static void  Update(List<Bullet> bullets)
+    public static void Update(List<Bullet> bullets)
     {
         for (int i = bullets.Count - 1; i >= 0; i--)
         {
@@ -190,9 +199,6 @@ public class Bullet : IGameObject
     }
 }
 
-
-
-
 public interface IGameObject
 {
     PositionComponent PositionComp { get; }
@@ -202,7 +208,3 @@ public interface IGameObject
     void Update();
     void Draw(SpriteBatch spriteBatch, GameTime gameTime);
 }
-
-
-
-

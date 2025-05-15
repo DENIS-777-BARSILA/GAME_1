@@ -6,6 +6,8 @@ using Components;
 using MY_GAME_1;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
+using System.IO;
+
 
 
 namespace MY_GAME_1;
@@ -16,92 +18,130 @@ public static class GameWorld
     public static ContentManager Content;
     public static GameTime GameTime;
     public static SpriteBatch _spriteBatch;
+    public static Viewport viewport;
 
 
     public static Action Update;
     public static Action<GameTime> Draw;
 
-    public static Viewport viewport;
-
     public static Background background;
     public static Player player;
 
-
     public static List<Bullet> Bullets = new List<Bullet>();
-    public static List<IGameObject> GameObjects = new List<IGameObject>();
+    public static List<IGameObject> ColisionObjects = new List<IGameObject>();
+    public static TileMap TileMap;
 
     public static Level Level;
 }
 
-public class Level
+
+
+
+
+public class TileMap
 {
 
-
-    public Texture2D BackgroundImage { get; private set; }
-    public Texture2D TexturePlayer { get; private set; }
-
-    public Texture2D TexturePlatform { get; private set; }
-    public Texture2D TextureBullet { get; private set; }
-    public Texture2D TextureTest { get; private set; }
-
-    public Texture2D TextureMonster { get; private set; }
-
-
-    public PlatfotmCreator platformCreator { get; private set; }
-    public MonsterCreator monsterCreator { get; private set; }
-
-    public Level(GraphicsDevice graphicsDevice, ContentManager content)
+    public enum MapsObject
     {
-        GameWorld.GraphicsDevice = graphicsDevice;
-        GameWorld.Content = content;
+        Empty,
+        Platform_1,
+        Platform_2,
+        Platform_3
     }
 
-    public void LoadContent()
+    public float TileSize
     {
-        BackgroundImage = GameWorld.Content.Load<Texture2D>("Background_0");
-        TexturePlayer = GameWorld.Content.Load<Texture2D>("player");
-
-        TextureBullet = GameWorld.Content.Load<Texture2D>("bullet");
-        TextureMonster = GameWorld.Content.Load<Texture2D>("monster_1");
-
-        TexturePlatform = GameWorld.Content.Load<Texture2D>("test");
-    }
-
-    public void Initialize()
-    {
-        platformCreator = new PlatfotmCreator(TexturePlatform, GameWorld.GraphicsDevice.Viewport);
-        monsterCreator = new MonsterCreator(TextureMonster, GameWorld.GraphicsDevice.Viewport);
-
-        GameWorld.player = new Player(new Vector2(50, 50), 100, 100, TexturePlayer, 10, 10, GameWorld.GraphicsDevice.Viewport, 0.2f);
-
-        platformCreator.MakePlatform_(0.3f,
-           new Vector2(100, 800),
-           new Vector2(200, 700),
-           new Vector2(400, 600),
-           new Vector2(600, 500),
-           new Vector2(800, 300));
-
-        monsterCreator.MakeMonster(0.5f, new Vector2(400, 400), new Vector2(700, 400));
-
-        GameWorld.GameObjects.AddRange(platformCreator.Platforms);
-        GameWorld.background = new Background(BackgroundImage, 2);
-
-
-        GameWorld.Update += () => monsterCreator.Update();
-        GameWorld.Update += () => GameWorld.player.Update();
-        GameWorld.Update += () => Bullet.Update(GameWorld.Bullets);
-
-        GameWorld.Draw += (gameTime) => GameWorld.background.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
-        GameWorld.Draw += (gameTime) => GameWorld.player.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
-        GameWorld.Draw += (gameTime) => monsterCreator.Draw(GameWorld._spriteBatch, gameTime);
-        GameWorld.Draw += (gameTime) => platformCreator.Draw(GameWorld._spriteBatch, gameTime);
+        set { }
+        get
+        {
+            return GameWorld.viewport.Width / HorizontalTiles;
+        }
     }
 
 
+    public readonly int HorizontalTiles = 32;
+    public readonly int VerticalTiles = 18;
 
-    public void Update()
+
+    public MapsObject[,] TileData;
+    private int tileSize;
+    private float scale;
+
+    public TileMap()
     {
-
+        TileData = new MapsObject[HorizontalTiles, VerticalTiles];
     }
 
+    public float CalculateScale(Texture2D texture)
+    {
+        float scaleX = TileSize / texture.Width;
+        float scaleY = TileSize / texture.Height;
+
+        return Math.Min(scaleX, scaleY);
+    }
+
+    public Vector2 GetPosition(int tileX, int tileY)
+    {
+        return TileSize * new Vector2(tileX, tileY);
+    }
+
+    public Vector2 GetPosition(TilePosition position)
+    {
+        return TileSize * new Vector2(position.TileX, position.TileY);
+    }
+
+    public void LoadFromTextFile(string filePath)
+    {
+        string[] lines = System.IO.File.ReadAllLines(filePath);
+
+        if (lines.Length != VerticalTiles)
+        {
+            throw new Exception($"Ожидается {VerticalTiles} строк в файле карты");
+        }
+
+        for (int y = 0; y < VerticalTiles; y++)
+        {
+            string line = lines[y];
+            if (line.Length != HorizontalTiles)
+            {
+                throw new Exception($"Строка {y} имеет неверную длину ({line.Length} вместо {HorizontalTiles})");
+            }
+
+            for (int x = 0; x < HorizontalTiles; x++)
+            {
+                TileData[x, y] = ParseTileChar(line[x]);
+            }
+        }
+    }
+
+    private MapsObject ParseTileChar(char c)
+    {
+        return c switch
+        {
+            '0' => MapsObject.Empty,
+            '1' => MapsObject.Platform_1,
+            '2' => MapsObject.Platform_2,
+            '3' => MapsObject.Platform_3,
+            'P' => MapsObject.Platform_1,
+
+            _ => MapsObject.Empty
+        };
+    }
+
+    public List<Vector2> GetListCells(MapsObject typeMapsObject)
+    {
+        List<Vector2> result = new List<Vector2>();
+
+        for (int i = 0; i < HorizontalTiles; i++)
+        {
+            for (int j = 0; j < VerticalTiles; j++)
+            {
+                if (TileData[i, j] == typeMapsObject)
+                    result.Add(new Vector2(i, j));
+
+            }
+        }
+
+        return result;
+    }
 }

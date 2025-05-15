@@ -1,1 +1,9 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Background_0.xnb","TextureProcessor","Texture2DContent",27504,1278037,0,148422
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/bullet.xnb","TextureProcessor","Texture2DContent",37244,547177,0,0228468
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/player.xnb","TextureProcessor","Texture2DContent",9089,2540485,0,0549949
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/monster_1.xnb","TextureProcessor","Texture2DContent",419690,1403333,0,0415352
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/platform_1.xnb","TextureProcessor","Texture2DContent",177,8277,0,0018641
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_2.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/platform_2.xnb","TextureProcessor","Texture2DContent",247717,992101,0,0519385
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/scottpilgrim_multiple.xnb","TextureProcessor","Texture2DContent",6210,967765,0,0187005
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/test.xnb","TextureProcessor","Texture2DContent",32046,199453,0,01013
