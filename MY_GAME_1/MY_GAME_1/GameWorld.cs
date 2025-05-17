@@ -21,9 +21,12 @@ public static class GameWorld
     public static Viewport viewport;
 
 
+
     public static Action Update;
     public static Action<GameTime> Draw;
 
+
+    public static HealthBar PlayerHealthBar;
     public static Background background;
     public static Player player;
 
@@ -88,6 +91,25 @@ public class TileMap
     public Vector2 GetPosition(TilePosition position)
     {
         return TileSize * new Vector2(position.TileX, position.TileY);
+    }
+
+    public bool IsEmpthyCell(int tileX, int tileY)
+    {
+        if (tileX < 0 || tileY < 0 ||
+            tileX > GameWorld.TileMap.HorizontalTiles ||
+            tileY > GameWorld.TileMap.VerticalTiles)
+        {
+            Console.WriteLine($"Недопустимые координаты платформы ({tileX}, {tileY})");
+            return false;
+        }
+
+        if (GameWorld.TileMap.TileData[tileX, tileY] != TileMap.MapsObject.Empty)
+        {
+            Console.WriteLine($"Клетка уже занята ({tileX}, {tileY})");
+            return false;
+        }
+
+        return true;
     }
 
     public void LoadFromTextFile(string filePath)

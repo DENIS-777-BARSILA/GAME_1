@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</SourceFile>
-  <SourceTime>2025-04-30T17:04:33.9263496+05:00</SourceTime>
-  <DestFile>e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/scottpilgrim_multiple.xnb</DestFile>
-  <DestTime>2025-05-11T16:59:14.516529+05:00</DestTime>
+  <SourceFile>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</SourceFile>
+  <SourceTime>2025-05-13T19:15:55.1106812+05:00</SourceTime>
+  <DestFile>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/scottpilgrim_multiple.xnb</DestFile>
+  <DestTime>2025-05-15T10:21:47.4136892+05:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

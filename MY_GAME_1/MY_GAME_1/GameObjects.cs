@@ -49,7 +49,7 @@ public class Player : IGameObject
         PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
         MotionComp = new MotionComponent(speedX, speedY, PositionComp, PhysicalComp, true);
 
-        ShootingComp = new ShootingComponent(PositionComp, RenderComp, 50);
+        ShootingComp = new ShootingComponent(PositionComp, RenderComp, 50, scale * 0.5f);
 
         RenderComp.PositionComp = PositionComp;
         RenderComp.MotionComp = MotionComp;
@@ -79,7 +79,8 @@ public class Monster_1 : IGameObject
 
 
 
-    public Monster_1(Vector2 position, int health, int maxHealth, Texture2D texture, float maxSpeedX, float maxSpeedY, Viewport viewport, float scale)
+    public Monster_1(Vector2 position, int health, Texture2D texture, float maxSpeedX, float maxSpeedY, Viewport viewport, float scale,
+    TypesMovement movementType)
     {
         RenderComp = new RenderComponent(texture, null, scale, 5, 2, 0.1f);
 
@@ -88,15 +89,21 @@ public class Monster_1 : IGameObject
 
 
 
-        HealthComp = new HealthComponent(maxHealth, health);
+        HealthComp = new HealthComponent(health, health);
         PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
         MotionComp = new MotionComponent(maxSpeedX, maxSpeedY, PositionComp, PhysicalComp, false);
 
-        AutoMotionComp = new AutoMotionComponent(PositionComp, RenderComp, MotionComp);
+        AutoMotionComp = new AutoMotionComponent(
+        PositionComp,
+        MotionComp,
+        RenderComp,
+        AutoMotionComponent.CreateMovement(movementType));
 
         RenderComp.PositionComp = PositionComp;
         RenderComp.MotionComp = MotionComp;
     }
+
+
 
     public void Update()
     {
@@ -104,6 +111,7 @@ public class Monster_1 : IGameObject
         AutoMotionComp.Update();
         MotionComp.Update();
         PhysicalComp.Update();
+        HealthComp.Update(this);
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -152,6 +160,8 @@ public class Bullet : IGameObject
     readonly Vector2 Direction;
     float SpeedX;
     float SpeedY;
+
+    public static readonly float Damage = 70;
 
     public Bullet(Vector2 position, Texture2D texture, Viewport viewport, float scale, float speedX, float speedY)
     {

@@ -4,17 +4,37 @@
   "BulletTexture": "bullet",
   "MonsterTexture": "monster_1",
   "PlatformTextures": {
-    "1": "platform_1",
+    "1": "platform_3",
     "2": "platform_2",
-    "3": "platform_1"
+    "3": "platform_4"
   },
   "Monsters": [
-    { "TileX": 2, "TileY": 2 },
-    { "TileX": 8, "TileY": 8 }
+    {
+      "position": {
+        "TileX": 2,
+        "TileY": 2
+      },
+      "Health": 100,
+      "SpeedX": 3,
+      "SpeedY": 0,
+      "Scale": 8.0,
+      "algorithmMovement": "Simple"
+    },
+    {
+      "position": {
+        "TileX": 15,
+        "TileY": 16
+      },
+      "Health": 150,
+      "SpeedX": 2,
+      "SpeedY": 0,
+      "Scale": 8.0,
+      "algorithmMovement": "Patrol"
+    }
   ],
   "PlayerStartPosition": {
-    "TileX": 12,
-    "TileY": 12
+    "TileX": 2,
+    "TileY": 2
   },
   "TileMapFile": "Level_Map_1.txt"
 }

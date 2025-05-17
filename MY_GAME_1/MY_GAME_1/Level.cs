@@ -67,12 +67,12 @@ public class Level
         monsterCreator = new MonsterCreator(TextureMonster, GameWorld.GraphicsDevice.Viewport, 10f);
 
         var playerPosition = GameWorld.TileMap.GetPosition(levelData.PlayerStartPosition);
-        GameWorld.player = new Player(playerPosition, 100, 100, TexturePlayer, 5, 5,
+        GameWorld.player = new Player(playerPosition, 90, 100, TexturePlayer, 5, 5,
                                    GameWorld.GraphicsDevice.Viewport, 0.1f);
 
 
-        foreach (var monsterPos in levelData.Monsters)
-            monsterCreator.MakeMonster(monsterPos.TileX, monsterPos.TileY);
+        foreach (var monsterData in levelData.Monsters)
+            monsterCreator.MakeMonster(monsterData);
 
         GameWorld.background = new Background(BackgroundImage, 2);
 
@@ -93,6 +93,20 @@ public class Level
         GameWorld.Draw += (gameTime) => GameWorld.player.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => monsterCreator.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => platformCreator.Draw(GameWorld._spriteBatch, gameTime);
+
+        InitializeInterface();
+
+    }
+
+    private void InitializeInterface()
+    {
+        HealthBar playerHealthBar = new HealthBar( new Vector2(20, 20),
+     200, height: 20, healthComp: GameWorld.player.HealthComp);
+
+    GameWorld.PlayerHealthBar = playerHealthBar;
+
+    GameWorld.Draw += (gameTime) => playerHealthBar.Draw(GameWorld._spriteBatch, gameTime);
+ 
     }
 
     public void Update()
@@ -110,7 +124,7 @@ public class LevelData
     public string MonsterTexture { get; set; }
     public Dictionary<string, string> PlatformTextures { get; set; }
 
-    public List<TilePosition> Monsters { get; set; }
+    public List<MonsterData> Monsters { get; set; }
 
     public TilePosition PlayerStartPosition;
 
@@ -124,4 +138,19 @@ public class TilePosition
 {
     public int TileX { get; set; }
     public int TileY { get; set; }
+}
+
+public class MonsterData
+{
+    public TilePosition position;
+
+    public int Health;
+
+    public float SpeedX;
+
+    public float SpeedY;
+
+    public float Scale;
+
+    public TypesMovement algorithmMovement;
 }

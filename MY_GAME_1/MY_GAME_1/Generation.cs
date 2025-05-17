@@ -30,22 +30,10 @@ public class PlatformCreator
 
     public void MakePlatform_(int tileX, int tileY, TileMap.MapsObject platformType)
     {
-        if (tileX < 0 || tileY < 0 ||
-            tileX > GameWorld.TileMap.HorizontalTiles ||
-            tileY > GameWorld.TileMap.VerticalTiles)
-        {
-            Console.WriteLine($"Недопустимые координаты платформы ({tileX}, {tileY})");
-            return;
-        }
-
-        if (GameWorld.TileMap.TileData[tileX, tileY] != TileMap.MapsObject.Empty)
-        {
-            Console.WriteLine($"Клетка уже занята ({tileX}, {tileY})");
-            return;
-        }
+        if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
 
         Vector2 position = GameWorld.TileMap.GetPosition(tileX, tileY);
-        GameWorld.TileMap.TileData[tileX, tileY] = platformType;
+        tileMap.TileData[tileX, tileY] = platformType;
         Console.WriteLine($"Created platform at ({tileX},{tileY}) with type ");
         InitializePlatform(position, platformType);
     }
@@ -60,15 +48,15 @@ public class PlatformCreator
 
     public void InitializePlatformsFromTileMap()
     {
-        for (int x = 0; x < GameWorld.TileMap.HorizontalTiles; x++)
+        for (int x = 0; x < tileMap.HorizontalTiles; x++)
         {
-            for (int y = 0; y < GameWorld.TileMap.VerticalTiles; y++)
+            for (int y = 0; y < tileMap.VerticalTiles; y++)
             {
-                var tileType = GameWorld.TileMap.TileData[x, y];
+                var tileType = tileMap.TileData[x, y];
                 if (tileType != TileMap.MapsObject.Empty &&
                     platformTextures.ContainsKey(tileType))
                 {
-                    Vector2 position = GameWorld.TileMap.GetPosition(x, y);
+                    Vector2 position = tileMap.GetPosition(x, y);
                     InitializePlatform(position, tileType);
                 }
             }
@@ -80,7 +68,7 @@ public class PlatformCreator
         if (!platformTextures.ContainsKey(platformType))
             platformType = TileMap.MapsObject.Platform_1;
 
-        float scale = GameWorld.TileMap.CalculateScale(platformTextures[platformType]);
+        float scale = tileMap.CalculateScale(platformTextures[platformType]);
         Platform_1 newPlatform = new Platform_1(position, platformTextures[platformType], Viewport, scale);
         Platforms.Add(newPlatform);
         GameWorld.ColisionObjects.Add(newPlatform);
@@ -99,6 +87,7 @@ public class PlatformCreator
 public class MonsterCreator
 {
     readonly Viewport Viewport;
+    private readonly TileMap tileMap = GameWorld.TileMap;
     public List<IGameObject> Monsters { get; private set; }
 
     readonly Texture2D Texture;
@@ -117,42 +106,52 @@ public class MonsterCreator
     }
 
 
-    public void MakeMonster(int tileX, int tileY)
+    public void MakeMonster(int tileX, int tileY, TypesMovement algorithmMovement)
     {
-        if (tileX < 0 || tileY < 0 ||
-        tileX > GameWorld.TileMap.HorizontalTiles ||
-        tileY > GameWorld.TileMap.VerticalTiles)
-        {
-            Console.WriteLine($"Недопустимые координаты платформы ({tileX}, {tileY})");
-            return;
-        }
+        if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
 
-        if (GameWorld.TileMap.TileData[tileX, tileY] != TileMap.MapsObject.Empty)
-        {
-            Console.WriteLine($"Клетка уже занята ({tileX}, {tileY})");
-            return;
-        }
+        Vector2 position = tileMap.GetPosition(tileX, tileY);
 
-        Vector2 position = GameWorld.TileMap.GetPosition(tileX, tileY);
-
-        InitializeMonster(position);
+        InitializeMonster(position, algorithmMovement);
     }
 
-    public void MakeMonster(params Vector2[] TileCells)
+    public void MakeMonster(MonsterData monsterData)
     {
-        foreach (var pos in TileCells)
-        {
-            MakeMonster(GameWorld.TileMap.GetPosition((int)pos.X, (int)pos.Y));
-        }
+        if (!tileMap.IsEmpthyCell(monsterData.position.TileX, monsterData.position.TileX)) return;
+
+        InitializeMonster(monsterData);
     }
 
-    private void InitializeMonster(Vector2 position)
+    private void InitializeMonster(Vector2 position, TypesMovement algorithmMovement)
     {
-        Monster_1 newMonster = new Monster_1(position, 100, 100, Texture,
-       4, 0, Viewport,TileScale* Scale);
+        Monster_1 newMonster = new Monster_1(position, 100, Texture,
+       4, 0, Viewport, TileScale * Scale, algorithmMovement);
         Monsters.Add(newMonster);
         GameWorld.ColisionObjects.Add(newMonster);
 
+    }
+
+    private void InitializeMonster(MonsterData monsterData)
+    {
+        Vector2 position = tileMap.GetPosition(monsterData.position.TileX, monsterData.position.TileX);
+
+        Monster_1 newMonster = new Monster_1(
+        position,
+        monsterData.Health, Texture,
+        monsterData.SpeedX,
+        monsterData.SpeedY,
+        Viewport,
+        TileScale * monsterData.Scale,
+        monsterData.algorithmMovement);
+
+        Monsters.Add(newMonster);
+        GameWorld.ColisionObjects.Add(newMonster);
+    }
+
+    public void Remove(Monster_1 monster)
+    {
+        GameWorld.Level.monsterCreator.Monsters.Remove(monster);
+        GameWorld.ColisionObjects.Remove(monster);
     }
 
     public void Update()

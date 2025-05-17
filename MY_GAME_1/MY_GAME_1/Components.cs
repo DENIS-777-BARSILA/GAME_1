@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MY_GAME_1;
+using SharpDX.Direct2D1.Effects;
 
 namespace Components;
 
@@ -71,6 +72,30 @@ public class HealthComponent
         maxHealth = newMaxHealth;
         if (health < maxHealth)
             health = maxHealth;
+    }
+
+    public void CheckDamageFromBullet(IGameObject gameObject)
+    {
+        for (int i = GameWorld.Bullets.Count - 1; i >= 0; i--)
+        {
+            Bullet bullet = GameWorld.Bullets[i];
+            if (PhysicalComponent.CheckColisionBetweenObjects(gameObject, bullet))
+            {
+                ChangeHealth(-(int)Bullet.Damage);
+                GameWorld.Bullets.RemoveAt(i);
+            }
+        }
+    }
+
+    public void Update(IGameObject gameObject)
+    {
+        CheckDamageFromBullet(gameObject);
+
+        if (health > 0)
+            return;
+
+        if (gameObject is Monster_1)
+            GameWorld.Level.monsterCreator.Remove((Monster_1)gameObject);
     }
 }
 
@@ -199,6 +224,14 @@ public class RenderComponent
     {
         return PositionComp != null && MotionComp != null;
     }
+
+
+    public Rectangle GetRectangleBounds()
+    {
+        Rectangle bounds = new Rectangle((int)PositionComp.Position.X, (int)PositionComp.Position.Y,
+        Width, Height);
+        return bounds;
+    }
 }
 
 public class PositionComponent
@@ -238,6 +271,21 @@ public class PhysicalComponent
         Viewport = GameWorld.viewport;
     }
 
+    public static Rectangle GetBounds(IGameObject gameObject)
+    {
+        if (gameObject?.PositionComp == null || gameObject.RenderComp == null)
+        {
+            throw new ArgumentNullException("GameObjects components are null");
+        }
+
+        return new Rectangle(
+            (int)gameObject.PositionComp.Position.X,
+            (int)gameObject.PositionComp.Position.Y,
+            gameObject.RenderComp.Width,
+            gameObject.RenderComp.Height);
+    }
+
+
     public bool IsGrounded()
     {
         Rectangle feetCheck = new Rectangle(
@@ -262,6 +310,14 @@ public class PhysicalComponent
         return GetCollisionSide(bounds).Side != Side.None;
     }
 
+    public ColisionData GetCollisionSide(Vector2 newPosition)
+    {
+        Rectangle newBounds = new Rectangle((int)newPosition.X, (int)newPosition.Y,
+            RenderComp.Width, RenderComp.Height);
+
+        return GetCollisionSide(newBounds);
+    }
+
     public ColisionData GetCollisionSide(Rectangle newBounds)
     {
         Vector2 direction = new Vector2(newBounds.X - PositionComp.Position.X,
@@ -273,7 +329,7 @@ public class PhysicalComponent
 
         ColisionData viewportCollision = GetViewportCollisions(newBounds, direction);
 
-        return  GetNearestCollision(objectCollision, viewportCollision);
+        return GetNearestCollision(objectCollision, viewportCollision);
     }
 
     public ColisionData GetObjectCollisions(Rectangle newBounds, Vector2 direction)
@@ -282,14 +338,10 @@ public class PhysicalComponent
 
         foreach (var obj in GameObjects)
         {
+            if (obj is Player || obj is Monster_1) continue;
             if (obj.PositionComp == this.PositionComp) continue;
 
-            Rectangle otherBounds = new Rectangle(
-                (int)obj.PositionComp.Position.X,
-                (int)obj.PositionComp.Position.Y,
-                obj.RenderComp.Width,
-                obj.RenderComp.Height);
-
+            Rectangle otherBounds = GetBounds(obj);
             if (!newBounds.Intersects(otherBounds)) continue;
 
             int penetration = 0;
@@ -331,6 +383,97 @@ public class PhysicalComponent
         return nearestCollision;
     }
 
+    private static ColisionData GetNearestCollision(params ColisionData[] collisions)
+    {
+        ColisionData result = new ColisionData(Side.None, int.MaxValue);
+
+        foreach (var collision in collisions)
+        {
+            if (collision.Side == Side.None) continue;
+
+            if (Math.Abs(collision.Penetration) < Math.Abs(result.Penetration))
+            {
+                result = collision;
+            }
+        }
+
+        return result.Side != Side.None ? result : new ColisionData(Side.None, 0);
+    }
+
+
+
+
+    public static bool CheckColisionBetweenObjects(IGameObject gameObject_1, IGameObject gameObject_2)
+    {
+        Side sideCollision = GetColisionBetweenObjects(gameObject_1, gameObject_2);
+
+        return sideCollision != Side.None;
+    }
+
+    public static Side GetColisionBetweenObjects(IGameObject gameObject_1, IGameObject gameObject_2)
+    {
+        Side sideCollision = Side.None;
+
+        Rectangle bounds_1 = gameObject_1.RenderComp.GetRectangleBounds();
+        Rectangle bounds_2 = gameObject_2.RenderComp.GetRectangleBounds();
+
+        sideCollision = GetCollisionSideWithObjectBounds(bounds_1, bounds_2);
+
+        return sideCollision;
+    }
+
+    public static bool CheckObjectCollisionWithFilter(IGameObject gameObject, Func<IGameObject, bool> filter = null)
+    {
+        foreach (var obj in GameWorld.ColisionObjects)
+        {
+            if (filter != null && !filter(obj)) continue;
+
+            return CheckColisionBetweenObjects(gameObject, obj);
+        }
+        return false;
+    }
+
+    public static bool CheckBoundsCollisionWithFilter(Rectangle bounds, Func<IGameObject, bool> filter = null)
+    {
+        foreach (var obj in GameWorld.ColisionObjects)
+        {
+            if (filter != null && !filter(obj)) continue;
+
+            return CheckCollisionSideWithObjectBounds(bounds, GetBounds(obj));
+        }
+        return false;
+    }
+
+
+    public static bool CheckCollisionSideWithObjectBounds(Rectangle bounds, Rectangle otherBounds)
+    {
+         Side sideCollision = GetCollisionSideWithObjectBounds(bounds, otherBounds);
+
+        return sideCollision != Side.None;
+    }
+
+    public static Side GetCollisionSideWithObjectBounds(Rectangle bounds, Rectangle otherBounds)
+    {
+        Rectangle intersection = Rectangle.Intersect(bounds, otherBounds);
+
+        if (intersection.Width > intersection.Height)
+        {
+            if (bounds.Top < otherBounds.Top)
+                return Side.Bottom;
+            else
+                return Side.Top;
+        }
+        else if (intersection.Height > intersection.Width)
+        {
+            if (bounds.Left < otherBounds.Left)
+                return Side.Right;
+            else
+                return Side.Left;
+        }
+
+        return Side.None;
+    }
+
     public ColisionData GetViewportCollisions(Rectangle newBounds, Vector2 direction)
     {
         ColisionData viewportCollision = new ColisionData(Side.None, int.MaxValue);
@@ -365,60 +508,15 @@ public class PhysicalComponent
         return viewportCollision;
     }
 
-    private ColisionData GetNearestCollision(params ColisionData[] collisions)
+    public bool CheckVievportCollision(Vector2 Position, float indent)
     {
-        ColisionData result = new ColisionData(Side.None, int.MaxValue);
-
-        foreach (var collision in collisions)
-        {
-            if (collision.Side == Side.None) continue;
-
-            if (Math.Abs(collision.Penetration) < Math.Abs(result.Penetration))
-            {
-                result = collision;
-            }
-        }
-
-        return result.Side != Side.None ? result : new ColisionData(Side.None, 0);
+        return
+        Position.X < 0 - indent ||
+        Position.X > GameWorld.viewport.Width + indent ||
+        Position.Y < 0 - indent ||
+        Position.Y > GameWorld.viewport.Height + indent;
     }
 
-
-
-    public Side GetCollisionSideWithObjectBounds(Rectangle bounds, Rectangle otherBounds)
-    {
-        Rectangle currentBounds = new Rectangle(
-            (int)PositionComp.Position.X,
-            (int)PositionComp.Position.Y,
-            RenderComp.Width,
-            RenderComp.Height);
-
-        Rectangle intersection = Rectangle.Intersect(currentBounds, otherBounds);
-
-        if (intersection.Width > intersection.Height)
-        {
-            if (bounds.Top < otherBounds.Top)
-                return Side.Bottom;
-            else
-                return Side.Top;
-        }
-        else if (intersection.Height > intersection.Width)
-        {
-            if (bounds.Left < otherBounds.Left)
-                return Side.Right;
-            else
-                return Side.Left;
-        }
-
-        return Side.None;
-    }
-
-    public ColisionData GetCollisionSide(Vector2 newPosition)
-    {
-        Rectangle newBounds = new Rectangle((int)newPosition.X, (int)newPosition.Y,
-            RenderComp.Width, RenderComp.Height);
-
-        return GetCollisionSide(newBounds);
-    }
 
 
     public bool Move(Vector2 newPosition)
@@ -469,15 +567,6 @@ public class PhysicalComponent
             Vector2 newPosition = PositionComp.Position + new Vector2(0, Gravity);
             Move(newPosition);
         }
-    }
-
-    public bool CheckVievportCollision(Vector2 Position, float indent)
-    {
-        return
-        Position.X < 0 - indent ||
-        Position.X > GameWorld.viewport.Width + indent ||
-        Position.Y < 0 - indent ||
-        Position.Y > GameWorld.viewport.Height + indent;
     }
 }
 
@@ -628,12 +717,14 @@ public class ShootingComponent
 
     private float _lastShotTime;
     private const float ShotDelay = 0.5f;
+    private readonly float Scale;
 
-    public ShootingComponent(PositionComponent positionComp, RenderComponent renderComp, float speed)
+    public ShootingComponent(PositionComponent positionComp, RenderComponent renderComp, float speed, float scale)
     {
         PositionComp = positionComp;
         RenderComp = renderComp;
         Speed = speed;
+        Scale = scale;
     }
 
 
@@ -664,65 +755,11 @@ public class ShootingComponent
         Vector2 direction = target - gunPosition;
         direction = Vector2.Normalize(direction);
 
-        GameWorld.Bullets.Add(new Bullet(gunPosition, GameWorld.Level.TextureBullet, GameWorld.viewport, 0.1f,
+        GameWorld.Bullets.Add(new Bullet(gunPosition, GameWorld.Level.TextureBullet, GameWorld.viewport, Scale,
          direction.X * Speed, direction.Y * Speed));
-
-        // Console.WriteLine($"Direction: {direction}, SpeedX: {direction.X * Speed}, SpeedY: {direction.Y * Speed}");
     }
 
 }
 
 
-public class AutoMotionComponent
-{
-    private PositionComponent PositionComp;
 
-    private RenderComponent RenderComp;
-
-    private MotionComponent MotionComp;
-
-    private readonly Player player;
-
-    private bool IsJump = false;
-    private Side CurrentDirection = Side.None;
-
-
-
-    public AutoMotionComponent(PositionComponent positionComp, RenderComponent renderComp, MotionComponent motionComp)
-    {
-        player = GameWorld.player;
-
-        PositionComp = positionComp;
-        RenderComp = renderComp;
-        MotionComp = motionComp;
-    }
-
-    private void CalculateMotion()
-    {
-        const int coeffForMotion = 5;
-        const int coeffForJump = 50;
-
-        float DistanceToPlayer = PositionComp.Position.X - player.PositionComp.Position.X;
-
-
-        if (Math.Abs(DistanceToPlayer) < coeffForMotion)
-            CurrentDirection = Side.None;
-        else if (DistanceToPlayer < 0)
-            CurrentDirection = Side.Right;
-        else
-            CurrentDirection = Side.Left;
-
-
-        if (PositionComp.Position.Y - player.PositionComp.Position.Y > coeffForJump && DistanceToPlayer < coeffForJump)
-            IsJump = true;
-        else
-            IsJump = false;
-    }
-
-    public void Update()
-    {
-        CalculateMotion();
-        MotionComp.Move(CurrentDirection);
-        if (IsJump) MotionComp.Jump();
-    }
-}
