@@ -7,6 +7,7 @@ using MY_GAME_1;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using SharpDX.MediaFoundation;
 
 
 
@@ -26,32 +27,20 @@ public static class GameWorld
     public static Action<GameTime> Draw;
 
 
-    public static HealthBar PlayerHealthBar;
+    public static TileMap TileMap;
+    public static Level Level;
+
+
     public static Background background;
     public static Player player;
 
     public static List<Bullet> Bullets = new List<Bullet>();
     public static List<IGameObject> ColisionObjects = new List<IGameObject>();
-    public static TileMap TileMap;
-
-    public static Level Level;
+    public static List<ICollectible> CollectibleObjects = new List<ICollectible>();
 }
-
-
-
-
 
 public class TileMap
 {
-
-    public enum MapsObject
-    {
-        Empty,
-        Platform_1,
-        Platform_2,
-        Platform_3
-    }
-
     public float TileSize
     {
         set { }
@@ -61,18 +50,17 @@ public class TileMap
         }
     }
 
-
     public readonly int HorizontalTiles = 32;
     public readonly int VerticalTiles = 18;
 
 
-    public MapsObject[,] TileData;
+    public ITileMapObject[,] TileData;
     private int tileSize;
     private float scale;
 
     public TileMap()
     {
-        TileData = new MapsObject[HorizontalTiles, VerticalTiles];
+        TileData = new ITileMapObject[HorizontalTiles, VerticalTiles];
     }
 
     public float CalculateScale(Texture2D texture)
@@ -103,7 +91,7 @@ public class TileMap
             return false;
         }
 
-        if (GameWorld.TileMap.TileData[tileX, tileY] != TileMap.MapsObject.Empty)
+        if (GameWorld.TileMap.TileData[tileX, tileY] != null)
         {
             Console.WriteLine($"Клетка уже занята ({tileX}, {tileY})");
             return false;
@@ -112,58 +100,54 @@ public class TileMap
         return true;
     }
 
-    public void LoadFromTextFile(string filePath)
+    public void LoadFromTextFile(string filePath, LevelData levelData)
+    {
+        TileMapObjectsInitializer.InitializeObjects(filePath, levelData, this);
+    }
+}
+
+public static class TileMapObjectsInitializer
+{
+    public static void InitializeObjects(string filePath, LevelData levelData, TileMap tileMap)
     {
         string[] lines = System.IO.File.ReadAllLines(filePath);
 
-        if (lines.Length != VerticalTiles)
-        {
-            throw new Exception($"Ожидается {VerticalTiles} строк в файле карты");
-        }
-
-        for (int y = 0; y < VerticalTiles; y++)
+        for (int y = 0; y < tileMap.VerticalTiles; y++)
         {
             string line = lines[y];
-            if (line.Length != HorizontalTiles)
+            if (line.Length != tileMap.HorizontalTiles)
             {
-                throw new Exception($"Строка {y} имеет неверную длину ({line.Length} вместо {HorizontalTiles})");
+                throw new Exception($"Строка {y} имеет неверную длину ({line.Length} вместо {tileMap.HorizontalTiles})");
             }
 
-            for (int x = 0; x < HorizontalTiles; x++)
+            for (int x = 0; x < tileMap.HorizontalTiles; x++)
             {
-                TileData[x, y] = ParseTileChar(line[x]);
+                TileMapObjectsInitializer.InitializeTypesObj(x, y, levelData, line[x], tileMap);
             }
+        }
+    }
+
+
+    private static void InitializeTypesObj(int tileX, int tileY, LevelData levelData, char type, TileMap tileMap)
+    {
+        if (levelData.MonsterTypes.ContainsKey(type))
+            GameWorld.Level.monsterCreator.MakeMonster(tileX, tileY, levelData.MonsterTypes[type]);
+
+        else if (levelData.PlatformTypes.ContainsKey(type))
+        {
+            GameWorld.Level.platformCreator.MakePlatform(tileX, tileY, levelData.PlatformTypes[type]);
+            tileMap.TileData[tileX, tileY] = levelData.PlatformTypes[type];
+        }
+
+        else if (levelData.CollectibleTypes.ContainsKey(type))
+        {
+            var collectibleData = levelData.CollectibleTypes[type];
+            var texture = GameWorld.Level.TexturesCollectible[collectibleData];
+            var position = tileMap.GetPosition(tileX, tileY);
+
+            GameWorld.Level.collectebleCreator.MakeCollecteble(tileX, tileY, levelData.CollectibleTypes[type]);
         }
     }
 
-    private MapsObject ParseTileChar(char c)
-    {
-        return c switch
-        {
-            '0' => MapsObject.Empty,
-            '1' => MapsObject.Platform_1,
-            '2' => MapsObject.Platform_2,
-            '3' => MapsObject.Platform_3,
-            'P' => MapsObject.Platform_1,
-
-            _ => MapsObject.Empty
-        };
-    }
-
-    public List<Vector2> GetListCells(MapsObject typeMapsObject)
-    {
-        List<Vector2> result = new List<Vector2>();
-
-        for (int i = 0; i < HorizontalTiles; i++)
-        {
-            for (int j = 0; j < VerticalTiles; j++)
-            {
-                if (TileData[i, j] == typeMapsObject)
-                    result.Add(new Vector2(i, j));
-
-            }
-        }
-
-        return result;
-    }
 }
+

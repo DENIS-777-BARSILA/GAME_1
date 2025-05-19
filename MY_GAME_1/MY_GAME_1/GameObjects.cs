@@ -4,8 +4,30 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Components;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MY_GAME_1;
+
+
+public interface ICollisionObject : IGameObject
+{
+    PhysicalComponent PhysicalComp { get; }
+}
+
+public interface IGameObject
+{
+    PositionComponent PositionComp { get; }
+    RenderComponent RenderComp { get; }
+
+    void Update();
+    void Draw(SpriteBatch spriteBatch, GameTime gameTime);
+}
+
+
+public interface ICollectible : IGameObject
+{
+    void Collect();
+}
 
 
 public class Background
@@ -60,6 +82,7 @@ public class Player : IGameObject
         MotionComp.Update(Keyboard.GetState());
         PhysicalComp.Update();
         ShootingComp.Update(Mouse.GetState());
+        HealthComp.Update(this);
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -77,6 +100,7 @@ public class Monster_1 : IGameObject
     public PhysicalComponent PhysicalComp { get; }
     public AutoMotionComponent AutoMotionComp { get; }
 
+    public static readonly float Damage = 20;
 
 
     public Monster_1(Vector2 position, int health, Texture2D texture, float maxSpeedX, float maxSpeedY, Viewport viewport, float scale,
@@ -209,12 +233,83 @@ public class Bullet : IGameObject
     }
 }
 
-public interface IGameObject
+public class MedKit : ICollectible
 {
-    PositionComponent PositionComp { get; }
-    RenderComponent RenderComp { get; }
-    PhysicalComponent PhysicalComp { get; }
+    public PositionComponent PositionComp { get; } = null;
+    public RenderComponent RenderComp { get; } = null;
+    private PhysicalComponent PhysicalComp { get; }
 
-    void Update();
-    void Draw(SpriteBatch spriteBatch, GameTime gameTime);
+    public static float recoveryCount = 50;
+
+    public MedKit(Vector2 position, Texture2D texture, float scale)
+    {
+        RenderComp = new RenderComponent(texture, null, scale);
+        PositionComp = new PositionComponent(position, RenderComp);
+        RenderComp.PositionComp = PositionComp;
+        PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
+    }
+
+    public void Collect()
+    {
+        GameWorld.player.HealthComp.ChangeHealth((int)recoveryCount);
+        GameWorld.Level.collectebleCreator.Remove(this);
+    }
+
+    public void Update()
+    {
+        if (PhysicalComponent.CheckColisionBetweenObjects(GameWorld.player, this))
+        {
+            Collect();
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        RenderComp.Draw(spriteBatch, gameTime);
+    }
 }
+
+
+public class Ammo : ICollectible
+{
+    public PositionComponent PositionComp { get; } = null;
+    public RenderComponent RenderComp { get; } = null;
+    private PhysicalComponent PhysicalComp { get; }
+
+    public static float recoveryCount = 50;
+
+    public Ammo(Vector2 position, Texture2D texture, float scale)
+    {
+        RenderComp = new RenderComponent(texture, null, scale);
+        PositionComp = new PositionComponent(position, RenderComp);
+        RenderComp.PositionComp = PositionComp;
+        PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
+    }
+
+    public void Collect()
+    {
+        GameWorld.player.HealthComp.ChangeHealth((int)recoveryCount);
+        GameWorld.Level.collectebleCreator.Remove(this);
+    }
+
+    public void Update()
+    {
+        if (PhysicalComponent.CheckColisionBetweenObjects(GameWorld.player, this))
+        {
+            Collect();
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        RenderComp.Draw(spriteBatch, gameTime);
+    }
+}
+
+
+
+
+
+
+
+

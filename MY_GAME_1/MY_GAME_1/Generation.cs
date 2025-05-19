@@ -16,63 +16,41 @@ public class PlatformCreator
     readonly Viewport Viewport;
     public List<Platform_1> Platforms { get; private set; }
 
-    public readonly float scale;
-    private readonly Dictionary<TileMap.MapsObject, Texture2D> platformTextures;
+    private readonly Dictionary<PlatformTypeData, Texture2D> platformTextures;
 
 
-    public PlatformCreator(Viewport viewport, Dictionary<TileMap.MapsObject, Texture2D> platformTextures)
+    public PlatformCreator(Viewport viewport, Dictionary<PlatformTypeData, Texture2D> _platformTextures)
     {
         Viewport = viewport;
         Platforms = new List<Platform_1>();
 
-        this.platformTextures = platformTextures;
+        this.platformTextures = _platformTextures;
     }
 
-    public void MakePlatform_(int tileX, int tileY, TileMap.MapsObject platformType)
+    public void MakePlatform(int tileX, int tileY, PlatformTypeData platformData)
     {
         if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
 
         Vector2 position = GameWorld.TileMap.GetPosition(tileX, tileY);
-        tileMap.TileData[tileX, tileY] = platformType;
-        Console.WriteLine($"Created platform at ({tileX},{tileY}) with type ");
-        InitializePlatform(position, platformType);
+        tileMap.TileData[tileX, tileY] = platformData;
+        InitializePlatform(position, platformData);
     }
 
-    public void MakePlatform_(TileMap.MapsObject platformType, params Vector2[] TileCells)
+    private void InitializePlatform(Vector2 position, PlatformTypeData platformData)
     {
-        foreach (var pos in TileCells)
-        {
-            MakePlatform_((int)pos.X, (int)pos.Y, platformType);
-        }
-    }
+        float tileScale = tileMap.CalculateScale(platformTextures[platformData]);
 
-    public void InitializePlatformsFromTileMap()
-    {
-        for (int x = 0; x < tileMap.HorizontalTiles; x++)
-        {
-            for (int y = 0; y < tileMap.VerticalTiles; y++)
-            {
-                var tileType = tileMap.TileData[x, y];
-                if (tileType != TileMap.MapsObject.Empty &&
-                    platformTextures.ContainsKey(tileType))
-                {
-                    Vector2 position = tileMap.GetPosition(x, y);
-                    InitializePlatform(position, tileType);
-                }
-            }
-        }
-    }
+        Platform_1 newPlatform = new Platform_1(
+            position,
+            platformTextures[platformData],
+            Viewport,
+            tileScale
+            );
 
-    private void InitializePlatform(Vector2 position, TileMap.MapsObject platformType)
-    {
-        if (!platformTextures.ContainsKey(platformType))
-            platformType = TileMap.MapsObject.Platform_1;
-
-        float scale = tileMap.CalculateScale(platformTextures[platformType]);
-        Platform_1 newPlatform = new Platform_1(position, platformTextures[platformType], Viewport, scale);
         Platforms.Add(newPlatform);
         GameWorld.ColisionObjects.Add(newPlatform);
-        Console.WriteLine($"Created platform at ({position.X},{position.Y}) with type {platformType}");
+
+        Console.WriteLine($"Created platform at ({position.X},{position.Y}");
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -89,61 +67,38 @@ public class MonsterCreator
     readonly Viewport Viewport;
     private readonly TileMap tileMap = GameWorld.TileMap;
     public List<IGameObject> Monsters { get; private set; }
+    private readonly Dictionary<MonsterTypeData, Texture2D> monsterTextures;
 
-    readonly Texture2D Texture;
-    public float Scale { get; private set; }
-    public readonly float TileScale;
-
-
-
-    public MonsterCreator(Texture2D texture, Viewport viewport, float scale)
+    public MonsterCreator(Viewport viewport, Dictionary<MonsterTypeData, Texture2D> _monsterTextures)
     {
-        Texture = texture;
         Viewport = viewport;
         Monsters = new List<IGameObject>();
-        TileScale = GameWorld.TileMap.CalculateScale(Texture);
-        Scale = scale;
+
+        monsterTextures = _monsterTextures;
     }
 
-
-    public void MakeMonster(int tileX, int tileY, TypesMovement algorithmMovement)
+    public void MakeMonster(int tileX, int tileY, MonsterTypeData monsterData)
     {
         if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
 
         Vector2 position = tileMap.GetPosition(tileX, tileY);
 
-        InitializeMonster(position, algorithmMovement);
+        InitializeMonster(position, monsterData);
     }
 
-    public void MakeMonster(MonsterData monsterData)
+    private void InitializeMonster(Vector2 position, MonsterTypeData monsterData)
     {
-        if (!tileMap.IsEmpthyCell(monsterData.position.TileX, monsterData.position.TileX)) return;
-
-        InitializeMonster(monsterData);
-    }
-
-    private void InitializeMonster(Vector2 position, TypesMovement algorithmMovement)
-    {
-        Monster_1 newMonster = new Monster_1(position, 100, Texture,
-       4, 0, Viewport, TileScale * Scale, algorithmMovement);
-        Monsters.Add(newMonster);
-        GameWorld.ColisionObjects.Add(newMonster);
-
-    }
-
-    private void InitializeMonster(MonsterData monsterData)
-    {
-        Vector2 position = tileMap.GetPosition(monsterData.position.TileX, monsterData.position.TileX);
+        float tileScale = tileMap.CalculateScale(monsterTextures[monsterData]);
 
         Monster_1 newMonster = new Monster_1(
-        position,
-        monsterData.Health, Texture,
-        monsterData.SpeedX,
-        monsterData.SpeedY,
-        Viewport,
-        TileScale * monsterData.Scale,
-        monsterData.algorithmMovement);
-
+            position,
+            monsterData.Health,
+            monsterTextures[monsterData],
+             monsterData.SpeedX,
+             monsterData.SpeedY,
+             Viewport,
+             monsterData.Scale * tileScale,
+             monsterData.algorithmMovement);
         Monsters.Add(newMonster);
         GameWorld.ColisionObjects.Add(newMonster);
     }
@@ -172,3 +127,78 @@ public class MonsterCreator
 
     }
 }
+
+public class CollectebleCreator
+{
+    readonly Viewport Viewport;
+    private readonly TileMap tileMap = GameWorld.TileMap;
+    public List<IGameObject> CollectibleObjs { get; private set; }
+    private readonly Dictionary<CollectibleTypeData, Texture2D> collectebleTextures;
+
+    public CollectebleCreator(Viewport viewport, Dictionary<CollectibleTypeData, Texture2D> _collectebleTextures)
+    {
+        Viewport = viewport;
+        CollectibleObjs = new List<IGameObject>();
+
+        collectebleTextures = _collectebleTextures;
+    }
+
+    public void MakeCollecteble(int tileX, int tileY, CollectibleTypeData collectebleData)
+    {
+        if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
+
+        Vector2 position = tileMap.GetPosition(tileX, tileY);
+
+        InitializeCollecteble(position, collectebleData);
+    }
+
+    private void InitializeCollecteble(Vector2 position, CollectibleTypeData collectebleData)
+    {
+        float tileScale = tileMap.CalculateScale(collectebleTextures[collectebleData]);
+        ICollectible newIcollectible = CollectibleFactory.Create(collectebleData, position, collectebleTextures[collectebleData], tileMap);
+
+        CollectibleObjs.Add(newIcollectible);
+        GameWorld.CollectibleObjects.Add(newIcollectible);
+    }
+
+    public void Remove(ICollectible CollectibleObj)
+    {
+        CollectibleObjs.Remove(CollectibleObj);
+        GameWorld.CollectibleObjects.Remove(CollectibleObj);
+    }
+
+    public void Update()
+    {
+        for (int i = CollectibleObjs.Count - 1; i >= 0; i--)
+        {
+            CollectibleObjs[i].Update();
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        for (int i = CollectibleObjs.Count - 1; i >= 0; i--)
+        {
+            CollectibleObjs[i].Draw(spriteBatch, gameTime);
+            Console.WriteLine($"Monster at {CollectibleObjs[i].PositionComp.Position}, scale: {CollectibleObjs[i].RenderComp.Scale}");
+        }
+
+    }
+}
+
+
+
+public static class CollectibleFactory
+    {
+        public static ICollectible Create(CollectibleTypeData data, Vector2 position, Texture2D texture, TileMap tileMap)
+        {
+            float tileScale = tileMap.CalculateScale(texture);
+
+            return data.Type switch
+            {
+                "MedKit" => new MedKit(position, texture, tileScale),
+                "Ammo" => new Ammo(position, texture, tileScale)
+            };
+            
+        }
+    }

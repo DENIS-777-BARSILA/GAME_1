@@ -164,7 +164,7 @@ public class PatrolMovement : AlgorithmMovement
 
 public class AlgorithmMovement_2 : AlgorithmMovement
 {
-
+    TileMap tileMap = GameWorld.TileMap;
 
     public void Update(PositionComponent position, MotionComponent motion, RenderComponent render)
     {

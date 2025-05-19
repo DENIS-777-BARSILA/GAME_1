@@ -1,40 +1,54 @@
 {
+  "TileMapFile": "Level_Map_1.txt",
   "BackgroundTexture": "Background_0",
   "PlayerTexture": "player",
   "BulletTexture": "bullet",
-  "MonsterTexture": "monster_1",
-  "PlatformTextures": {
-    "1": "platform_3",
-    "2": "platform_2",
-    "3": "platform_4"
+  "PlatformTypes": {
+    "1": {
+      "Texture": "platform_1"
+    },
+    "2": {
+      "Texture": "platform_2"
+    },
+    "3": {
+      "Texture": "platform_2"
+    },
+    "P": {
+      "Texture": "platform_3"
+    }
   },
-  "Monsters": [
-    {
-      "position": {
-        "TileX": 2,
-        "TileY": 2
-      },
+  "MonsterTypes": {
+    "A": {
+      "Texture": "monster_1",
       "Health": 100,
       "SpeedX": 3,
       "SpeedY": 0,
-      "Scale": 8.0,
-      "algorithmMovement": "Simple"
+      "Scale": 4.5,
+      "AlgorithmMovement": "Simple"
     },
-    {
-      "position": {
-        "TileX": 15,
-        "TileY": 16
-      },
+    "B": {
+      "Texture": "monster_1",
       "Health": 150,
       "SpeedX": 2,
       "SpeedY": 0,
-      "Scale": 8.0,
-      "algorithmMovement": "Patrol"
+      "Scale": 5.0,
+      "AlgorithmMovement": "Patrol"
     }
-  ],
+  },
   "PlayerStartPosition": {
     "TileX": 2,
     "TileY": 2
   },
-  "TileMapFile": "Level_Map_1.txt"
+  "CollectibleTypes": {
+    "M": {
+        "Texture": "MedKit",
+        "Type": "MedKit",
+        "Value": 50
+    },
+    "K": {
+        "Texture": "Ammo",
+        "Type": "Ammo",
+        "Value": 50
+    }
+}
 }

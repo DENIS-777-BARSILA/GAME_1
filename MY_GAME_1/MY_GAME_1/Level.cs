@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Newtonsoft.Json;
-
+using System.Linq;
 
 namespace MY_GAME_1;
 
@@ -18,14 +18,17 @@ public class Level
     public Texture2D BackgroundImage { get; private set; }
     public Texture2D TexturePlayer { get; private set; }
 
-    public Dictionary<TileMap.MapsObject, Texture2D> TexturesPlatforms { get; private set; }
+    public Dictionary<PlatformTypeData, Texture2D> TexturesPlatforms { get; private set; }
+    public Dictionary<MonsterTypeData, Texture2D> TexturesMonsters { get; private set; }
+    public Dictionary<CollectibleTypeData, Texture2D> TexturesCollectible { get; private set; }
+
+
     public Texture2D TextureBullet { get; private set; }
     public Texture2D TextureTest { get; private set; }
 
-    public Texture2D TextureMonster { get; private set; }
-
     public PlatformCreator platformCreator { get; private set; }
     public MonsterCreator monsterCreator { get; private set; }
+    public CollectebleCreator collectebleCreator { get; private set; }
 
     private LevelData levelData;
 
@@ -49,13 +52,24 @@ public class Level
         BackgroundImage = GameWorld.Content.Load<Texture2D>(levelData.BackgroundTexture);
         TexturePlayer = GameWorld.Content.Load<Texture2D>(levelData.PlayerTexture);
         TextureBullet = GameWorld.Content.Load<Texture2D>(levelData.BulletTexture);
-        TextureMonster = GameWorld.Content.Load<Texture2D>(levelData.MonsterTexture);
 
-        TexturesPlatforms = new Dictionary<TileMap.MapsObject, Texture2D>();
-        foreach (var kvp in levelData.PlatformTextures)
+
+        TexturesPlatforms = new Dictionary<PlatformTypeData, Texture2D>();
+        foreach (var type in levelData.PlatformTypes)
         {
-            var platformType = (TileMap.MapsObject)int.Parse(kvp.Key);
-            TexturesPlatforms[platformType] = GameWorld.Content.Load<Texture2D>(kvp.Value);
+            TexturesPlatforms[type.Value] = GameWorld.Content.Load<Texture2D>(type.Value.Texture);
+        }
+
+        TexturesMonsters = new Dictionary<MonsterTypeData, Texture2D>();
+        foreach (var type in levelData.MonsterTypes)
+        {
+            TexturesMonsters[type.Value] = GameWorld.Content.Load<Texture2D>(type.Value.Texture);
+        }
+
+        TexturesCollectible = new Dictionary<CollectibleTypeData, Texture2D>();
+        foreach (var type in levelData.CollectibleTypes)
+        {
+            TexturesCollectible[type.Value] = GameWorld.Content.Load<Texture2D>(type.Value.Texture);
         }
     }
 
@@ -63,57 +77,60 @@ public class Level
     {
         GameWorld.TileMap = new TileMap();
 
-        platformCreator = new PlatformCreator(GameWorld.GraphicsDevice.Viewport, TexturesPlatforms);
-        monsterCreator = new MonsterCreator(TextureMonster, GameWorld.GraphicsDevice.Viewport, 10f);
-
         var playerPosition = GameWorld.TileMap.GetPosition(levelData.PlayerStartPosition);
-        GameWorld.player = new Player(playerPosition, 90, 100, TexturePlayer, 5, 5,
-                                   GameWorld.GraphicsDevice.Viewport, 0.1f);
+        GameWorld.player = new Player(playerPosition, 180, 200, TexturePlayer, 5, 5,
+                                   GameWorld.GraphicsDevice.Viewport, 0.05f);
 
+        GameWorld.background = new Background(BackgroundImage, 2f);
 
-        foreach (var monsterData in levelData.Monsters)
-            monsterCreator.MakeMonster(monsterData);
+        platformCreator = new PlatformCreator(GameWorld.GraphicsDevice.Viewport, TexturesPlatforms);
+        monsterCreator = new MonsterCreator(GameWorld.GraphicsDevice.Viewport, TexturesMonsters);
+        collectebleCreator = new CollectebleCreator(GameWorld.GraphicsDevice.Viewport, TexturesCollectible);
 
-        GameWorld.background = new Background(BackgroundImage, 2);
-
-
+        GameWorld.Level = this;
 
         string mapPath = Path.Combine(GameWorld.Content.RootDirectory, "Levels", levelData.TileMapFile);
-        GameWorld.TileMap.LoadFromTextFile(mapPath);
+        GameWorld.TileMap.LoadFromTextFile(mapPath, levelData);
 
+        InitializeGameProcess();
+        InitializeInterface();
+    }
 
-
-        platformCreator.InitializePlatformsFromTileMap();
-
+    private void InitializeGameProcess()
+    {
         GameWorld.Update += () => monsterCreator.Update();
+        GameWorld.Update += () => collectebleCreator.Update();
         GameWorld.Update += () => GameWorld.player.Update();
+        GameWorld.Update += () => Bullet.Update(GameWorld.Bullets);
         GameWorld.Update += () => Bullet.Update(GameWorld.Bullets);
 
         GameWorld.Draw += (gameTime) => GameWorld.background.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => GameWorld.player.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => monsterCreator.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => platformCreator.Draw(GameWorld._spriteBatch, gameTime);
-
-        InitializeInterface();
-
+        GameWorld.Draw += (gameTime) => collectebleCreator.Draw(GameWorld._spriteBatch, gameTime);
     }
 
     private void InitializeInterface()
     {
-        HealthBar playerHealthBar = new HealthBar( new Vector2(20, 20),
+        HealthBar playerHealthBar = new HealthBar(new Vector2(20, 20),
      200, height: 20, healthComp: GameWorld.player.HealthComp);
 
-    GameWorld.PlayerHealthBar = playerHealthBar;
+        InterfaceObjects.PlayerHealthBar = playerHealthBar;
 
-    GameWorld.Draw += (gameTime) => playerHealthBar.Draw(GameWorld._spriteBatch, gameTime);
- 
+        GameWorld.Draw += (gameTime) => playerHealthBar.Draw(GameWorld._spriteBatch, gameTime);
     }
 
-    public void Update()
+    public void RemoveGameObject(IGameObject gameObject)
     {
+        if (gameObject is Monster_1)
+            monsterCreator.Remove((Monster_1)gameObject);
+        if (gameObject is ICollectible)
+        {
+            GameWorld.CollectibleObjects.Remove((ICollectible)gameObject);
 
+        }
     }
-
 }
 
 public class LevelData
@@ -121,16 +138,14 @@ public class LevelData
     public string BackgroundTexture { get; set; }
     public string PlayerTexture { get; set; }
     public string BulletTexture { get; set; }
-    public string MonsterTexture { get; set; }
-    public Dictionary<string, string> PlatformTextures { get; set; }
 
-    public List<MonsterData> Monsters { get; set; }
+    public Dictionary<char, PlatformTypeData> PlatformTypes { get; set; }
+    public Dictionary<char, MonsterTypeData> MonsterTypes { get; set; }
+    public Dictionary<char, CollectibleTypeData> CollectibleTypes { get; set; }
 
     public TilePosition PlayerStartPosition;
 
     public string TileMapFile { get; set; }
-
-
 
 }
 
@@ -140,10 +155,9 @@ public class TilePosition
     public int TileY { get; set; }
 }
 
-public class MonsterData
+public class MonsterTypeData
 {
-    public TilePosition position;
-
+    public string Texture;
     public int Health;
 
     public float SpeedX;
@@ -154,3 +168,19 @@ public class MonsterData
 
     public TypesMovement algorithmMovement;
 }
+
+public class PlatformTypeData : ITileMapObject
+{
+    public string Texture;
+}
+
+public class CollectibleTypeData : ITileMapObject
+{
+    public string Texture { get; set; }
+    public string Type { get; set; }
+    public float Value { get; set; }
+}
+
+public interface ITileMapObject;
+
+

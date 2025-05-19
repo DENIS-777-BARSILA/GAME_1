@@ -1,11 +1,2 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Background_0.xnb","TextureProcessor","Texture2DContent",27504,1278037,0,1322766
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/bullet.xnb","TextureProcessor","Texture2DContent",37244,547177,0,012243
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/player.xnb","TextureProcessor","Texture2DContent",9089,2540485,0,0483524
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/monster_1.xnb","TextureProcessor","Texture2DContent",419690,1403333,0,0262025
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/platform_1.xnb","TextureProcessor","Texture2DContent",177,8277,0,0014125
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_2.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/platform_2.xnb","TextureProcessor","Texture2DContent",247717,992101,0,0279716
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_3.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/platform_3.xnb","TextureProcessor","Texture2DContent",459716,1170809,0,0362434
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_4.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/platform_4.xnb","TextureProcessor","Texture2DContent",139162,2553685,0,0643873
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/scottpilgrim_multiple.xnb","TextureProcessor","Texture2DContent",6210,967765,0,0246334
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/test.xnb","TextureProcessor","Texture2DContent",32046,199453,0,0056884
+"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Ammo.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Ammo.xnb","TextureProcessor","Texture2DContent",97196,842809,0,1909575

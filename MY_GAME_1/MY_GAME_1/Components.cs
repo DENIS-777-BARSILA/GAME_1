@@ -35,6 +35,10 @@ public class HealthComponent
     private int health;
     private int maxHealth;
 
+    private const int DelayDamage = 10;
+
+    private int currentTime = DelayDamage;
+
     public int Health
     {
         get { return health; }
@@ -58,8 +62,7 @@ public class HealthComponent
 
     public void SetHealth(int newHealth)
     {
-        health = newHealth <= maxHealth ? newHealth : maxHealth;
-        health = newHealth > 0 ? newHealth : 0;
+        health = Math.Clamp(newHealth, 0, maxHealth);
     }
 
     public void ChangeMaxHealth(int difference)
@@ -76,6 +79,9 @@ public class HealthComponent
 
     public void CheckDamageFromBullet(IGameObject gameObject)
     {
+        if (!(gameObject is Monster_1))
+            return;
+
         for (int i = GameWorld.Bullets.Count - 1; i >= 0; i--)
         {
             Bullet bullet = GameWorld.Bullets[i];
@@ -85,17 +91,52 @@ public class HealthComponent
                 GameWorld.Bullets.RemoveAt(i);
             }
         }
-    }
-
-    public void Update(IGameObject gameObject)
-    {
-        CheckDamageFromBullet(gameObject);
 
         if (health > 0)
             return;
 
         if (gameObject is Monster_1)
             GameWorld.Level.monsterCreator.Remove((Monster_1)gameObject);
+    }
+
+    public void CheckDamageFromMonster(IGameObject gameObject)
+    {
+        if (!(gameObject is Player))
+            return;
+
+        foreach (Monster_1 monster in GameWorld.Level.monsterCreator.Monsters)
+        {
+            if (PhysicalComponent.CheckColisionBetweenObjects(gameObject, monster))
+            {
+                ChangeHealth(-(int)Monster_1.Damage);
+            }
+        }
+
+        if (health > 0)
+            return;
+
+
+    }
+
+    public void Update(IGameObject gameObject)
+    {
+        if (CheckDelay())
+        {
+            CheckDamageFromMonster(gameObject);
+        }
+
+        CheckDamageFromBullet(gameObject);
+    }
+
+    public bool CheckDelay()
+    {
+        currentTime--;
+        if (currentTime <= 0)
+        {
+            currentTime = DelayDamage;
+            return true;
+        }
+        return false;
     }
 }
 
@@ -292,7 +333,7 @@ public class PhysicalComponent
            (int)PositionComp.Position.X,
            (int)PositionComp.Position.Y + RenderComp.Height,
            RenderComp.Width,
-           10);
+           2);
 
         return CheckCollision(feetCheck) || feetCheck.Bottom >= Viewport.Height;
     }
@@ -447,7 +488,7 @@ public class PhysicalComponent
 
     public static bool CheckCollisionSideWithObjectBounds(Rectangle bounds, Rectangle otherBounds)
     {
-         Side sideCollision = GetCollisionSideWithObjectBounds(bounds, otherBounds);
+        Side sideCollision = GetCollisionSideWithObjectBounds(bounds, otherBounds);
 
         return sideCollision != Side.None;
     }

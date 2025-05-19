@@ -4,8 +4,10 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
+    <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Ammo.png</File>
     <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
     <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png</File>
+    <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/MedKit.png</File>
     <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
     <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png</File>
     <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
@@ -16,6 +18,8 @@
     <File>c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File>player.png</File>
