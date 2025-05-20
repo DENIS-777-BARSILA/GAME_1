@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -26,22 +25,21 @@ public class Level
     public Texture2D TextureBullet { get; private set; }
     public Texture2D TextureTest { get; private set; }
 
-    public PlatformCreator platformCreator { get; private set; }
-    public MonsterCreator monsterCreator { get; private set; }
-    public CollectebleCreator collectebleCreator { get; private set; }
-
+    public GameObjectCreator gameObjectCreator { get; private set; }
     private LevelData levelData;
 
-    public Level(GraphicsDevice graphicsDevice, ContentManager content, string jsonLevelPath)
+    public Level(GraphicsDevice graphicsDevice, ContentManager content, int levelNumber)
     {
         GameWorld.GraphicsDevice = graphicsDevice;
         GameWorld.Content = content;
 
-        LoadLevelData(jsonLevelPath);
+        InitializeNewGame();
     }
 
-    private void LoadLevelData(string jsonPath)
+    private void LoadLevelData(int levelNumber)
     {
+        var jsonPath = $"Levels/Level_{levelNumber}.json";
+
         string json = File.ReadAllText(Path.Combine(GameWorld.Content.RootDirectory, jsonPath));
 
         levelData = JsonConvert.DeserializeObject<LevelData>(json);
@@ -49,43 +47,71 @@ public class Level
 
     public void LoadContent()
     {
+        InterfaceObjects.LoadContent();
+
         BackgroundImage = GameWorld.Content.Load<Texture2D>(levelData.BackgroundTexture);
         TexturePlayer = GameWorld.Content.Load<Texture2D>(levelData.PlayerTexture);
         TextureBullet = GameWorld.Content.Load<Texture2D>(levelData.BulletTexture);
 
-
         TexturesPlatforms = new Dictionary<PlatformTypeData, Texture2D>();
         foreach (var type in levelData.PlatformTypes)
-        {
             TexturesPlatforms[type.Value] = GameWorld.Content.Load<Texture2D>(type.Value.Texture);
-        }
 
         TexturesMonsters = new Dictionary<MonsterTypeData, Texture2D>();
         foreach (var type in levelData.MonsterTypes)
-        {
             TexturesMonsters[type.Value] = GameWorld.Content.Load<Texture2D>(type.Value.Texture);
-        }
 
         TexturesCollectible = new Dictionary<CollectibleTypeData, Texture2D>();
         foreach (var type in levelData.CollectibleTypes)
-        {
             TexturesCollectible[type.Value] = GameWorld.Content.Load<Texture2D>(type.Value.Texture);
-        }
     }
+
+
+    private void ResetGameState()
+    {
+        GameWorld.Bullets.Clear();
+        GameWorld.ColisionObjects.Clear();
+        GameWorld.CollectibleObjects.Clear();
+
+        GameWorld.Update = null;
+        GameWorld.Draw = null;
+    }
+
+    public void InitializeNewGame()
+    {
+        LoadLevelData(1);
+        LoadContent();
+        ResetGameState();
+        Initialize();
+        InitializePlayer();
+        
+    }
+
+    public void SetLevelNumber(int levelNumber)
+    {
+        LoadLevelData(levelNumber);
+        LoadContent();
+        InitializePlayer();
+        Initialize();
+    }
+
 
     public void Initialize()
     {
         GameWorld.TileMap = new TileMap();
 
-        var playerPosition = GameWorld.TileMap.GetPosition(levelData.PlayerStartPosition);
-        GameWorld.player = new Player(playerPosition, 180, 200, TexturePlayer, 5, 5,
-                                   GameWorld.GraphicsDevice.Viewport, 0.05f);
-
         GameWorld.background = new Background(BackgroundImage, 2f);
 
-        platformCreator = new PlatformCreator(GameWorld.GraphicsDevice.Viewport, TexturesPlatforms);
-        monsterCreator = new MonsterCreator(GameWorld.GraphicsDevice.Viewport, TexturesMonsters);
-        collectebleCreator = new CollectebleCreator(GameWorld.GraphicsDevice.Viewport, TexturesCollectible);
+        var platformFactory = new PlatformFactory(GameWorld.GraphicsDevice.Viewport, TexturesPlatforms);
+        var monsterFactory = new MonsterFactory(GameWorld.GraphicsDevice.Viewport, TexturesMonsters);
+        var collectibleFactory = new CollectibleFactory(GameWorld.GraphicsDevice.Viewport, TexturesCollectible);
+
+        gameObjectCreator = new GameObjectCreator(
+            GameWorld.TileMap,
+            platformFactory,
+            monsterFactory,
+            collectibleFactory
+        );
 
         GameWorld.Level = this;
 
@@ -93,44 +119,36 @@ public class Level
         GameWorld.TileMap.LoadFromTextFile(mapPath, levelData);
 
         InitializeGameProcess();
-        InitializeInterface();
+    }
+
+    private void InitializePlayer()
+    {
+        var playerPosition = GameWorld.TileMap.GetPosition(levelData.PlayerStartPosition);
+        GameWorld.player = new Player(playerPosition, 180, 200, TexturePlayer, 5, 5,
+                                   GameWorld.GraphicsDevice.Viewport, 0.05f);
+
+        InterfaceObjects.InitializeInterface();
     }
 
     private void InitializeGameProcess()
     {
-        GameWorld.Update += () => monsterCreator.Update();
-        GameWorld.Update += () => collectebleCreator.Update();
+        GameWorld.Update += () => gameObjectCreator.Update();
         GameWorld.Update += () => GameWorld.player.Update();
-        GameWorld.Update += () => Bullet.Update(GameWorld.Bullets);
         GameWorld.Update += () => Bullet.Update(GameWorld.Bullets);
 
         GameWorld.Draw += (gameTime) => GameWorld.background.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => GameWorld.player.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
-        GameWorld.Draw += (gameTime) => monsterCreator.Draw(GameWorld._spriteBatch, gameTime);
-        GameWorld.Draw += (gameTime) => platformCreator.Draw(GameWorld._spriteBatch, gameTime);
-        GameWorld.Draw += (gameTime) => collectebleCreator.Draw(GameWorld._spriteBatch, gameTime);
-    }
+        GameWorld.Draw += (gameTime) => gameObjectCreator.Draw(GameWorld._spriteBatch, gameTime);
 
-    private void InitializeInterface()
-    {
-        HealthBar playerHealthBar = new HealthBar(new Vector2(20, 20),
-     200, height: 20, healthComp: GameWorld.player.HealthComp);
-
-        InterfaceObjects.PlayerHealthBar = playerHealthBar;
-
-        GameWorld.Draw += (gameTime) => playerHealthBar.Draw(GameWorld._spriteBatch, gameTime);
-    }
-
-    public void RemoveGameObject(IGameObject gameObject)
-    {
-        if (gameObject is Monster_1)
-            monsterCreator.Remove((Monster_1)gameObject);
-        if (gameObject is ICollectible)
+        GameWorld.Draw += (gameTime) =>
         {
-            GameWorld.CollectibleObjects.Remove((ICollectible)gameObject);
-
-        }
+            foreach (var bullet in GameWorld.Bullets)
+            {
+                bullet.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
+            }
+        };
     }
+
 }
 
 public class LevelData
@@ -169,18 +187,16 @@ public class MonsterTypeData
     public TypesMovement algorithmMovement;
 }
 
-public class PlatformTypeData : ITileMapObject
+public class PlatformTypeData : IGameObjectData
 {
     public string Texture;
 }
 
-public class CollectibleTypeData : ITileMapObject
+public class CollectibleTypeData : IGameObjectData
 {
     public string Texture { get; set; }
     public string Type { get; set; }
     public float Value { get; set; }
 }
 
-public interface ITileMapObject;
-
-
+public interface IGameObjectData;

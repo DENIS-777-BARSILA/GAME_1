@@ -32,6 +32,7 @@ public class Game1 : Game
     protected override void Initialize()
     {
         base.Initialize();
+
     }
 
     protected override void LoadContent()
@@ -39,33 +40,82 @@ public class Game1 : Game
         GameWorld.viewport = GraphicsDevice.Viewport;
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         GameWorld._spriteBatch = _spriteBatch;
-        _level = new Level(GraphicsDevice, Content, "Levels/Level_1.json");
-        _level.LoadContent();
-        _level.Initialize();
-        GameWorld.Level = _level;
+        _level = new Level(GraphicsDevice, Content, GameState.CurrentLevel);
+
+        InterfaceObjects.InitializeMenus(() => this.Exit());
     }
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
         GameWorld.GameTime = gameTime;
-        GameWorld.Update();
+
+        var keyboardState = Keyboard.GetState();
+
+        switch (GameState.CurrentState)
+        {
+            case GameStates.MainMenu:
+                if (InterfaceObjects.MainMenu != null)
+                    InterfaceObjects.MainMenu.Update(keyboardState);
+                break;
+
+            case GameStates.Playing:
+                if (keyboardState.IsKeyDown(Keys.Escape))
+                    GameState.CurrentState = GameStates.Paused;
+                else
+                    GameWorld.Update?.Invoke();
+                break;
+
+            case GameStates.Paused:
+                if (InterfaceObjects.PauseMenu != null)
+                    InterfaceObjects.PauseMenu.Update(keyboardState);
+                break;
+
+            case GameStates.GameOver:
+                if (InterfaceObjects.GameOverMenu != null)
+                    InterfaceObjects.GameOverMenu.Update(keyboardState);
+                break;
+        }
     }
 
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
-
         _spriteBatch.Begin();
 
-        GameWorld.Draw(gameTime);
+        if (GameWorld.background != null)
+        {
+            GameWorld.background.RenderComp.Draw(_spriteBatch, gameTime);
+        }
 
-        GameWorld.Bullets.ForEach(b => b.Draw(_spriteBatch, gameTime));
+        switch (GameState.CurrentState)
+        {
+            case GameStates.MainMenu:
+                if (InterfaceObjects.MainMenu != null)
+                    InterfaceObjects.MainMenu.Draw(_spriteBatch);
+                break;
 
-        Texture2D debugTexture = new Texture2D(GraphicsDevice, 1, 1);
-        debugTexture.SetData(new[] { Color.Red });
+            case GameStates.Playing:
+                GameWorld.Draw?.Invoke(gameTime);
+                break;
+
+            case GameStates.Paused:
+                GameWorld.Draw?.Invoke(gameTime);
+
+                var pixel = new Texture2D(GraphicsDevice, 1, 1);
+                pixel.SetData(new[] { Color.Black });
+                _spriteBatch.Draw(pixel,
+                    new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
+                    new Color(0, 0, 0, 150));
+
+                if (InterfaceObjects.PauseMenu != null)
+                    InterfaceObjects.PauseMenu.Draw(_spriteBatch);
+                break;
+
+            case GameStates.GameOver:
+                if (InterfaceObjects.GameOverMenu != null)
+                    InterfaceObjects.GameOverMenu.Draw(_spriteBatch);
+                break;
+        }
 
         // хитбокс игрока
         //  Rectangle playerBounds = new Rectangle(

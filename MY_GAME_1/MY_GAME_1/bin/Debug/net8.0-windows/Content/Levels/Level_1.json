@@ -5,7 +5,7 @@
   "BulletTexture": "bullet",
   "PlatformTypes": {
     "1": {
-      "Texture": "platform_1"
+      "Texture": "platform_4"
     },
     "2": {
       "Texture": "platform_2"
@@ -43,12 +43,18 @@
     "M": {
         "Texture": "MedKit",
         "Type": "MedKit",
-        "Value": 50
+        "Value": 0
     },
     "K": {
         "Texture": "Ammo",
         "Type": "Ammo",
-        "Value": 50
+        "Value": 0
+    },
+    "D": {
+        "Texture": "Door",
+        "Type": "Door",
+        "Value": 0
     }
+
 }
 }

@@ -58,6 +58,8 @@ public class Player : IGameObject
     public PhysicalComponent PhysicalComp { get; }
     public ShootingComponent ShootingComp { get; }
 
+    public int AmmoCount = 10;
+
     public Player(Vector2 position, int health, int maxHealth, Texture2D texture, float speedX, float speedY, Viewport viewport, float scale)
     {
         RenderComp = new RenderComponent(texture, null, scale, 1, 1, 0.1f);
@@ -252,7 +254,7 @@ public class MedKit : ICollectible
     public void Collect()
     {
         GameWorld.player.HealthComp.ChangeHealth((int)recoveryCount);
-        GameWorld.Level.collectebleCreator.Remove(this);
+        GameWorld.Level.gameObjectCreator.Remove(this);
     }
 
     public void Update()
@@ -276,7 +278,7 @@ public class Ammo : ICollectible
     public RenderComponent RenderComp { get; } = null;
     private PhysicalComponent PhysicalComp { get; }
 
-    public static float recoveryCount = 50;
+    public static int Count = 10;
 
     public Ammo(Vector2 position, Texture2D texture, float scale)
     {
@@ -288,13 +290,49 @@ public class Ammo : ICollectible
 
     public void Collect()
     {
-        GameWorld.player.HealthComp.ChangeHealth((int)recoveryCount);
-        GameWorld.Level.collectebleCreator.Remove(this);
+        GameWorld.player.AmmoCount += Count;
+        GameWorld.Level.gameObjectCreator.Remove(this);
     }
 
     public void Update()
     {
         if (PhysicalComponent.CheckColisionBetweenObjects(GameWorld.player, this))
+        {
+            Collect();
+        }
+    }
+
+    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+    {
+        RenderComp.Draw(spriteBatch, gameTime);
+    }
+}
+
+
+public class ExitDoor : ICollectible
+{
+    public PositionComponent PositionComp { get; } = null;
+    public RenderComponent RenderComp { get; } = null;
+    private PhysicalComponent PhysicalComp { get; }
+
+    public static int Count = 10;
+
+    public ExitDoor(Vector2 position, Texture2D texture, float scale)
+    {
+        RenderComp = new RenderComponent(texture, null, scale);
+        PositionComp = new PositionComponent(position, RenderComp);
+        RenderComp.PositionComp = PositionComp;
+        PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
+    }
+
+    public void Collect()
+    {
+        GameState.CurrentLevel += 1;
+    }
+
+    public void Update()
+    {
+        if (PhysicalComponent.CheckColisionBetweenObjects(GameWorld.player, this) )
         {
             Collect();
         }

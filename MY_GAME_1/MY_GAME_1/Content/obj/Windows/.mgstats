@@ -1,2 +1,3 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Ammo.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Ammo.xnb","TextureProcessor","Texture2DContent",97196,842809,0,1909575
+"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/door.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/door.xnb","TextureProcessor","Texture2DContent",9972,139961,0,1168971
+"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/font_menu.spritefont","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/font_menu.xnb","FontDescriptionProcessor","SpriteFontContent",2068,136226,0,0717715

@@ -10,195 +10,218 @@ using SharpDX.Direct2D1.Effects;
 
 namespace MY_GAME_1;
 
-public class PlatformCreator
+public class GameObjectCreator
 {
-    private readonly TileMap tileMap = GameWorld.TileMap;
-    readonly Viewport Viewport;
-    public List<Platform_1> Platforms { get; private set; }
+    private readonly TileMap _tileMap;
+    private readonly IPlatformFactory _platformFactory;
+    private readonly IMonsterFactory _monsterFactory;
+    private readonly ICollectibleFactory _collectibleFactory;
 
-    private readonly Dictionary<PlatformTypeData, Texture2D> platformTextures;
+    public List<Platform_1> Platforms { get; } = new();
+    public List<Monster_1> Monsters { get; } = new();
+    public List<ICollectible> Collectibles { get; } = new();
 
-
-    public PlatformCreator(Viewport viewport, Dictionary<PlatformTypeData, Texture2D> _platformTextures)
+    public GameObjectCreator
+    (
+        TileMap tileMap,
+        IPlatformFactory platformFactory,
+        IMonsterFactory monsterFactory,
+        ICollectibleFactory collectibleFactory)
     {
-        Viewport = viewport;
-        Platforms = new List<Platform_1>();
-
-        this.platformTextures = _platformTextures;
+        _tileMap = tileMap;
+        _platformFactory = platformFactory;
+        _monsterFactory = monsterFactory;
+        _collectibleFactory = collectibleFactory;
     }
 
-    public void MakePlatform(int tileX, int tileY, PlatformTypeData platformData)
+    public void MakeGameObject(int tileX, int tileY, IGameObjectData data)
     {
-        if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
+        if (!_tileMap.IsEmpthyCell(tileX, tileY)) return;
 
-        Vector2 position = GameWorld.TileMap.GetPosition(tileX, tileY);
-        tileMap.TileData[tileX, tileY] = platformData;
-        InitializePlatform(position, platformData);
-    }
+        var position = _tileMap.GetPosition(tileX, tileY);
 
-    private void InitializePlatform(Vector2 position, PlatformTypeData platformData)
-    {
-        float tileScale = tileMap.CalculateScale(platformTextures[platformData]);
-
-        Platform_1 newPlatform = new Platform_1(
-            position,
-            platformTextures[platformData],
-            Viewport,
-            tileScale
-            );
-
-        Platforms.Add(newPlatform);
-        GameWorld.ColisionObjects.Add(newPlatform);
-
-        Console.WriteLine($"Created platform at ({position.X},{position.Y}");
-    }
-
-    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-    {
-        for (int i = Platforms.Count - 1; i >= 0; i--)
+        switch (data)
         {
-            Platforms[i].Draw(spriteBatch, gameTime);
+            case PlatformTypeData platformData:
+                MakePlatform(tileX, tileY, platformData);
+                break;
+
+            case MonsterTypeData monsterData:
+                MakeMonster(tileX, tileY, monsterData);
+                break;
+
+            case CollectibleTypeData collectibleData:
+                MakeCollectible(tileX, tileY, collectibleData);
+                break;
         }
     }
-}
 
-public class MonsterCreator
-{
-    readonly Viewport Viewport;
-    private readonly TileMap tileMap = GameWorld.TileMap;
-    public List<IGameObject> Monsters { get; private set; }
-    private readonly Dictionary<MonsterTypeData, Texture2D> monsterTextures;
 
-    public MonsterCreator(Viewport viewport, Dictionary<MonsterTypeData, Texture2D> _monsterTextures)
+    public void MakePlatform(int tileX, int tileY, PlatformTypeData data)
     {
-        Viewport = viewport;
-        Monsters = new List<IGameObject>();
+        if (!_tileMap.IsEmpthyCell(tileX, tileY)) return;
 
-        monsterTextures = _monsterTextures;
+        var position = _tileMap.GetPosition(tileX, tileY);
+        var platform = _platformFactory.Create(position, data);
+
+        Platforms.Add(platform);
+        GameWorld.ColisionObjects.Add(platform);
     }
 
-    public void MakeMonster(int tileX, int tileY, MonsterTypeData monsterData)
+    public void MakeMonster(int tileX, int tileY, MonsterTypeData data)
     {
-        if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
+        if (!_tileMap.IsEmpthyCell(tileX, tileY)) return;
 
-        Vector2 position = tileMap.GetPosition(tileX, tileY);
+        var position = _tileMap.GetPosition(tileX, tileY);
+        var monster = _monsterFactory.Create(position, data);
 
-        InitializeMonster(position, monsterData);
+        Monsters.Add(monster);
     }
 
-    private void InitializeMonster(Vector2 position, MonsterTypeData monsterData)
+    public void MakeCollectible(int tileX, int tileY, CollectibleTypeData data)
     {
-        float tileScale = tileMap.CalculateScale(monsterTextures[monsterData]);
+        if (!_tileMap.IsEmpthyCell(tileX, tileY)) return;
 
-        Monster_1 newMonster = new Monster_1(
-            position,
-            monsterData.Health,
-            monsterTextures[monsterData],
-             monsterData.SpeedX,
-             monsterData.SpeedY,
-             Viewport,
-             monsterData.Scale * tileScale,
-             monsterData.algorithmMovement);
-        Monsters.Add(newMonster);
-        GameWorld.ColisionObjects.Add(newMonster);
+        var position = _tileMap.GetPosition(tileX, tileY);
+        var collectible = _collectibleFactory.Create(position, data);
+
+        Collectibles.Add(collectible);
+        GameWorld.CollectibleObjects.Add(collectible);
     }
 
-    public void Remove(Monster_1 monster)
+    public void Remove(IGameObject obj)
     {
-        GameWorld.Level.monsterCreator.Monsters.Remove(monster);
-        GameWorld.ColisionObjects.Remove(monster);
+    switch (obj)
+        {
+            case Platform_1 platform:
+                if (Platforms.Contains(platform))
+                {
+                    Platforms.Remove(platform);
+                    GameWorld.ColisionObjects.Remove(platform);
+                }
+                break;
+
+            case Monster_1 monster:
+                if (Monsters.Contains(monster))
+                {
+                    Monsters.Remove(monster);
+                    GameWorld.ColisionObjects.Remove(monster);
+                }
+                break;
+
+            case ICollectible collectible:
+                if (Collectibles.Contains(collectible))
+                {
+                    Collectibles.Remove(collectible);
+                    GameWorld.CollectibleObjects.Remove(collectible);
+                }
+                break;
+        }
     }
 
     public void Update()
     {
-        for (int i = Monsters.Count - 1; i >= 0; i--)
+        var monstersCopy = new List<Monster_1>(Monsters);
+        foreach (var monster in monstersCopy)
         {
-            Monsters[i].Update();
+            if (Monsters.Contains(monster))
+                monster.Update();
+        }
+
+        var collectiblesCopy = new List<ICollectible>(Collectibles);
+        foreach (var collectible in collectiblesCopy)
+        {
+            if (Collectibles.Contains(collectible))
+                collectible.Update();
         }
     }
 
     public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
     {
-        for (int i = Monsters.Count - 1; i >= 0; i--)
-        {
-            Monsters[i].Draw(spriteBatch, gameTime);
-            Console.WriteLine($"Monster at {Monsters[i].PositionComp.Position}, scale: {Monsters[i].RenderComp.Scale}");
-        }
-
+        foreach (var platform in Platforms) platform.Draw(spriteBatch, gameTime);
+        foreach (var monster in Monsters) monster.Draw(spriteBatch, gameTime);
+        foreach (var collectible in Collectibles) collectible.Draw(spriteBatch, gameTime);
     }
 }
 
-public class CollectebleCreator
+public interface IGameObjectFactory<TData, TObject> where TObject : IGameObject
 {
-    readonly Viewport Viewport;
-    private readonly TileMap tileMap = GameWorld.TileMap;
-    public List<IGameObject> CollectibleObjs { get; private set; }
-    private readonly Dictionary<CollectibleTypeData, Texture2D> collectebleTextures;
+    TObject Create(Vector2 position, TData data);
+}
 
-    public CollectebleCreator(Viewport viewport, Dictionary<CollectibleTypeData, Texture2D> _collectebleTextures)
+public interface IPlatformFactory : IGameObjectFactory<PlatformTypeData, Platform_1> { }
+public interface IMonsterFactory : IGameObjectFactory<MonsterTypeData, Monster_1> { }
+public interface ICollectibleFactory : IGameObjectFactory<CollectibleTypeData, ICollectible> { }
+
+
+public class PlatformFactory : IPlatformFactory
+{
+    private readonly Viewport _viewport;
+    private readonly Dictionary<PlatformTypeData, Texture2D> _textures;
+
+    public PlatformFactory(Viewport viewport, Dictionary<PlatformTypeData, Texture2D> textures)
     {
-        Viewport = viewport;
-        CollectibleObjs = new List<IGameObject>();
-
-        collectebleTextures = _collectebleTextures;
+        _viewport = viewport;
+        _textures = textures;
     }
 
-    public void MakeCollecteble(int tileX, int tileY, CollectibleTypeData collectebleData)
+    public Platform_1 Create(Vector2 position, PlatformTypeData data)
     {
-        if (!tileMap.IsEmpthyCell(tileX, tileY)) return;
-
-        Vector2 position = tileMap.GetPosition(tileX, tileY);
-
-        InitializeCollecteble(position, collectebleData);
-    }
-
-    private void InitializeCollecteble(Vector2 position, CollectibleTypeData collectebleData)
-    {
-        float tileScale = tileMap.CalculateScale(collectebleTextures[collectebleData]);
-        ICollectible newIcollectible = CollectibleFactory.Create(collectebleData, position, collectebleTextures[collectebleData], tileMap);
-
-        CollectibleObjs.Add(newIcollectible);
-        GameWorld.CollectibleObjects.Add(newIcollectible);
-    }
-
-    public void Remove(ICollectible CollectibleObj)
-    {
-        CollectibleObjs.Remove(CollectibleObj);
-        GameWorld.CollectibleObjects.Remove(CollectibleObj);
-    }
-
-    public void Update()
-    {
-        for (int i = CollectibleObjs.Count - 1; i >= 0; i--)
-        {
-            CollectibleObjs[i].Update();
-        }
-    }
-
-    public void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-    {
-        for (int i = CollectibleObjs.Count - 1; i >= 0; i--)
-        {
-            CollectibleObjs[i].Draw(spriteBatch, gameTime);
-            Console.WriteLine($"Monster at {CollectibleObjs[i].PositionComp.Position}, scale: {CollectibleObjs[i].RenderComp.Scale}");
-        }
-
+        var texture = _textures[data];
+        float scale = GameWorld.TileMap.CalculateScale(texture);
+        return new Platform_1(position, texture, _viewport, scale);
     }
 }
 
+public class MonsterFactory : IMonsterFactory
+{
+    private readonly Viewport _viewport;
+    private readonly Dictionary<MonsterTypeData, Texture2D> _textures;
 
-
-public static class CollectibleFactory
+    public MonsterFactory(Viewport viewport, Dictionary<MonsterTypeData, Texture2D> textures)
     {
-        public static ICollectible Create(CollectibleTypeData data, Vector2 position, Texture2D texture, TileMap tileMap)
-        {
-            float tileScale = tileMap.CalculateScale(texture);
-
-            return data.Type switch
-            {
-                "MedKit" => new MedKit(position, texture, tileScale),
-                "Ammo" => new Ammo(position, texture, tileScale)
-            };
-            
-        }
+        _viewport = viewport;
+        _textures = textures;
     }
+
+    public Monster_1 Create(Vector2 position, MonsterTypeData data)
+    {
+        var texture = _textures[data];
+        float tileScale = GameWorld.TileMap.CalculateScale(texture);
+        return new Monster_1(
+            position,
+            data.Health,
+            texture,
+            data.SpeedX,
+            data.SpeedY,
+            _viewport,
+            data.Scale * tileScale,
+            data.algorithmMovement);
+    }
+}
+
+public class CollectibleFactory : ICollectibleFactory
+{
+    private readonly Viewport _viewport;
+    private readonly Dictionary<CollectibleTypeData, Texture2D> _textures;
+
+    public CollectibleFactory(Viewport viewport, Dictionary<CollectibleTypeData, Texture2D> textures)
+    {
+        _viewport = viewport;
+        _textures = textures;
+    }
+
+    public ICollectible Create(Vector2 position, CollectibleTypeData data)
+    {
+        var texture = _textures[data];
+        float scale = GameWorld.TileMap.CalculateScale(texture);
+
+        return data.Type switch
+        {
+            "MedKit" => new MedKit(position, texture, scale),
+            "Ammo" => new Ammo(position, texture, scale),
+            "Door" => new ExitDoor(position, texture, scale),
+            _ => throw new ArgumentException($"Unknown collectible type: {data.Type}")
+        };
+    }
+}

@@ -15,6 +15,9 @@ namespace MY_GAME_1;
 
 public static class GameWorld
 {
+   
+
+
     public static GraphicsDevice GraphicsDevice;
     public static ContentManager Content;
     public static GameTime GameTime;
@@ -54,13 +57,13 @@ public class TileMap
     public readonly int VerticalTiles = 18;
 
 
-    public ITileMapObject[,] TileData;
+    public IGameObjectData[,] TileData;
     private int tileSize;
     private float scale;
 
     public TileMap()
     {
-        TileData = new ITileMapObject[HorizontalTiles, VerticalTiles];
+        TileData = new IGameObjectData[HorizontalTiles, VerticalTiles];
     }
 
     public float CalculateScale(Texture2D texture)
@@ -131,23 +134,14 @@ public static class TileMapObjectsInitializer
     private static void InitializeTypesObj(int tileX, int tileY, LevelData levelData, char type, TileMap tileMap)
     {
         if (levelData.MonsterTypes.ContainsKey(type))
-            GameWorld.Level.monsterCreator.MakeMonster(tileX, tileY, levelData.MonsterTypes[type]);
+            GameWorld.Level.gameObjectCreator.MakeMonster(tileX, tileY, levelData.MonsterTypes[type]);
 
         else if (levelData.PlatformTypes.ContainsKey(type))
-        {
-            GameWorld.Level.platformCreator.MakePlatform(tileX, tileY, levelData.PlatformTypes[type]);
-            tileMap.TileData[tileX, tileY] = levelData.PlatformTypes[type];
-        }
+            GameWorld.Level.gameObjectCreator.MakePlatform(tileX, tileY, levelData.PlatformTypes[type]);
 
         else if (levelData.CollectibleTypes.ContainsKey(type))
-        {
-            var collectibleData = levelData.CollectibleTypes[type];
-            var texture = GameWorld.Level.TexturesCollectible[collectibleData];
-            var position = tileMap.GetPosition(tileX, tileY);
+            GameWorld.Level.gameObjectCreator.MakeCollectible(tileX, tileY, levelData.CollectibleTypes[type]);
 
-            GameWorld.Level.collectebleCreator.MakeCollecteble(tileX, tileY, levelData.CollectibleTypes[type]);
-        }
     }
-
 }
 

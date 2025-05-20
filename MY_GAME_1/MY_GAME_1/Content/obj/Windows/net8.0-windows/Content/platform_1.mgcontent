@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <SourceFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</SourceFile>
-  <SourceTime>2025-05-13T19:15:55.091623+05:00</SourceTime>
+  <SourceTime>2025-05-13T19:15:55.1263134+05:00</SourceTime>
   <DestFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/platform_1.xnb</DestFile>
-  <DestTime>2025-05-16T17:29:11.6326936+05:00</DestTime>
+  <DestTime>2025-05-19T12:42:03.0598416+05:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

@@ -7,6 +7,9 @@
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Ammo.png</File>
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/door.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/File.spritefont</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/font_menu.spritefont</File>
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/MedKit.png</File>
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png</File>
@@ -15,15 +18,16 @@
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_3.png</File>
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_4.png</File>
     <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
-    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/test.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
-    <File>player.png</File>
+    <File>font_1.spritefont</File>
     <File xsi:nil="true" />
+    <File xsi:nil="true" />
+    <File>player.png</File>
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

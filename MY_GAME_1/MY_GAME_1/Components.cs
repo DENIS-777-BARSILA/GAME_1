@@ -96,7 +96,7 @@ public class HealthComponent
             return;
 
         if (gameObject is Monster_1)
-            GameWorld.Level.monsterCreator.Remove((Monster_1)gameObject);
+            GameWorld.Level.gameObjectCreator.Remove((Monster_1)gameObject);
     }
 
     public void CheckDamageFromMonster(IGameObject gameObject)
@@ -104,7 +104,7 @@ public class HealthComponent
         if (!(gameObject is Player))
             return;
 
-        foreach (Monster_1 monster in GameWorld.Level.monsterCreator.Monsters)
+        foreach (Monster_1 monster in GameWorld.Level.gameObjectCreator.Monsters)
         {
             if (PhysicalComponent.CheckColisionBetweenObjects(gameObject, monster))
             {
@@ -112,8 +112,8 @@ public class HealthComponent
             }
         }
 
-        if (health > 0)
-            return;
+        if (health <= 0)
+            GameState.CurrentState = GameStates.GameOver;
 
 
     }
@@ -777,6 +777,10 @@ public class ShootingComponent
             float currentTime = (float)GameWorld.GameTime.TotalGameTime.TotalSeconds;
             if (currentTime - _lastShotTime > ShotDelay)
             {
+                if (GameWorld.player.AmmoCount <= 0)
+                    return;
+                GameWorld.player.AmmoCount -= 1;
+
                 MakeBullet(mouseState);
                 _lastShotTime = currentTime;
             }

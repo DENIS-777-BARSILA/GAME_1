@@ -106,13 +106,11 @@ C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\bullet.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\mobokot.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\monster_1.xnb
-C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\platform_1.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\platform_2.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\platform_3.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\platform_4.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\player.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\scottpilgrim_multiple.xnb
-C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\test.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.exe
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.deps.json
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\MY_GAME_1.runtimeconfig.json
@@ -137,3 +135,8 @@ C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\MY_GAME
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\obj\Debug\net8.0-windows\ref\MY_GAME_1.dll
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\MedKit.xnb
 C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\Ammo.xnb
+C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\platform_1.xnb
+C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\f.xnb
+C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\font_1.xnb
+C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\font_menu.xnb
+C:\UniryGame\GitHub1\GAME_1\MY_GAME_1\MY_GAME_1\bin\Debug\net8.0-windows\Content\door.xnb
