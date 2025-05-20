@@ -84,6 +84,15 @@ public class TileMap
         return TileSize * new Vector2(position.TileX, position.TileY);
     }
 
+    public Vector2 GetTilePosition(Vector2 position)
+{
+    int tileX = (int)(position.X / TileSize);
+    int tileY = (int)(position.Y / TileSize);
+
+    return new Vector2(tileX, tileY);
+}
+
+
     public bool IsEmpthyCell(int tileX, int tileY)
     {
         if (tileX < 0 || tileY < 0 ||

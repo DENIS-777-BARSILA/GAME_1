@@ -43,18 +43,17 @@
     "M": {
         "Texture": "MedKit",
         "Type": "MedKit",
-        "Value": 0
+        "Value": 50
     },
     "K": {
         "Texture": "Ammo",
         "Type": "Ammo",
-        "Value": 0
+        "Value": 50
     },
     "D": {
         "Texture": "Door",
         "Type": "Door",
         "Value": 0
     }
-
 }
 }

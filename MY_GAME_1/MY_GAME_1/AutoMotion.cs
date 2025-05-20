@@ -112,12 +112,18 @@ public class PatrolMovement : AlgorithmMovement
     private bool movingRight = true;
     private int directionChangeCooldown = 0;
     private const int DirectionChangeCooldownFrames = 10;
+    private readonly Random random = new Random();
 
     private PhysicalComponent physicalComp;
 
     public void Update(PositionComponent position, MotionComponent motion, RenderComponent render)
     {
-        startX ??= position.Position.X;
+        if (startX == null)
+        {
+            startX = position.Position.X;
+            movingRight = random.Next(2) == 1;
+        }
+
         physicalComp ??= new PhysicalComponent(position, render);
 
         if (directionChangeCooldown > 0)

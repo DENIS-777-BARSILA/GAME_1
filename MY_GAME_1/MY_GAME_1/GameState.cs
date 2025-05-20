@@ -10,7 +10,6 @@ using System.IO;
 using SharpDX.MediaFoundation;
 
 
-
 namespace MY_GAME_1;
 
 
@@ -40,25 +39,6 @@ public static class GameState
         }
     }
 
-    public static void RestartGame()
-    {
-        CurrentLevel = 0;
-        ResetGameState();
-    }
-
-    private static void ResetGameState()
-    {
-        GameWorld.Bullets.Clear();
-        GameWorld.ColisionObjects.Clear();
-        GameWorld.CollectibleObjects.Clear();
-
-        GameWorld.Update = null;
-        GameWorld.Draw = null;
-
-        GameWorld.Level.Initialize();
-
-        InterfaceObjects.InitializeMenus(() => Environment.Exit(0));
-    }
 }
 
 

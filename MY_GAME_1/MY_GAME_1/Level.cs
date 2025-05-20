@@ -79,20 +79,23 @@ public class Level
 
     public void InitializeNewGame()
     {
+        ResetGameState();
         LoadLevelData(1);
         LoadContent();
-        ResetGameState();
         Initialize();
         InitializePlayer();
+        InterfaceObjects.InitializeInterface();
         
     }
 
     public void SetLevelNumber(int levelNumber)
     {
+        ResetGameState();
         LoadLevelData(levelNumber);
         LoadContent();
         InitializePlayer();
         Initialize();
+        InterfaceObjects.InitializeInterface();
     }
 
 
@@ -127,7 +130,7 @@ public class Level
         GameWorld.player = new Player(playerPosition, 180, 200, TexturePlayer, 5, 5,
                                    GameWorld.GraphicsDevice.Viewport, 0.05f);
 
-        InterfaceObjects.InitializeInterface();
+        
     }
 
     private void InitializeGameProcess()
