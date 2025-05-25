@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MY_GAME_1;
 using SharpDX.Direct2D1.Effects;
+using SimpleLinkedList;
 
 namespace Components;
 
@@ -15,7 +17,7 @@ public enum TypesMovement
 {
     Simple,
     Patrol,
-    Chase
+    AlgorithmMovement_Flying
 }
 
 
@@ -58,8 +60,9 @@ public class AutoMotionComponent
         return type switch
         {
             TypesMovement.Patrol => new PatrolMovement(),
-            TypesMovement.Chase => new AlgorithmMovement_Simple(),
+            TypesMovement.AlgorithmMovement_Flying => new AlgorithmMovement_Flying(),
             _ => new AlgorithmMovement_Simple()
+
         };
     }
 }
@@ -168,18 +171,143 @@ public class PatrolMovement : AlgorithmMovement
 }
 
 
-public class AlgorithmMovement_2 : AlgorithmMovement
+public class AlgorithmMovement_Flying : AlgorithmMovement
 {
-    TileMap tileMap = GameWorld.TileMap;
+    private const int MaxSearchDepth = 10;
+    private TileMap tileMap = GameWorld.TileMap;
+    private PathFinder pathFinder;
+    private float lastPathUpdate;
+    private const float pathUpdateInterval = 0.5f;
+    private SimpleLinkedList<TilePosition> currentPath;
 
-    public void Update(PositionComponent position, MotionComponent motion, RenderComponent render)
+    public AlgorithmMovement_Flying()
     {
+        pathFinder = new PathFinder(tileMap);
+    }
 
-
+    public void Update(PositionComponent positionComp, MotionComponent motionComp, RenderComponent render)
+    {
+        try
         {
-            motion.Move(Side.Left);
+            float currentTime = (float)GameWorld.GameTime.TotalGameTime.TotalSeconds;
+
+            if (currentTime - lastPathUpdate > pathUpdateInterval || currentPath == null)
+            {
+                UpdatePath(positionComp);
+                lastPathUpdate = currentTime;
+            }
+
+            FollowPath(positionComp, motionComp);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in flying movement: {ex.Message}");
         }
     }
 
+    private void UpdatePath(PositionComponent positionComp)
+    {
+        var playerPos = GameWorld.player.PositionComp.Position;
+        var monsterPos = positionComp.Position;
 
+        var playerTile = WorldToTile(playerPos);
+        var monsterTile = WorldToTile(monsterPos);
+
+        if (!tileMap.InBounds(playerTile) || !tileMap.InBounds(monsterTile))
+            return;
+
+        currentPath = pathFinder.FindPaths(monsterTile, playerTile, MaxSearchDepth).FirstOrDefault();
+    }
+
+    private void FollowPath(PositionComponent positionComp, MotionComponent motionComp)
+    {
+        if (currentPath == null) return;
+
+        var nextPoint = currentPath.Previous?.Value;
+        if (nextPoint == null) return;
+
+        var nextPos = tileMap.GetPosition(nextPoint);
+        var currentPos = positionComp.Position;
+
+        Vector2 direction = nextPos - currentPos;
+        if (direction != Vector2.Zero)
+            direction.Normalize();
+
+        motionComp.Move(direction);
+
+        if (Vector2.Distance(currentPos, nextPos) < 10f)
+        {
+            currentPath = currentPath.Previous;
+        }
+    }
+
+    private TilePosition WorldToTile(Vector2 worldPos)
+    {
+        return new TilePosition
+        {
+            X = (int)(worldPos.X / tileMap.TileSize),
+            Y = (int)(worldPos.Y / tileMap.TileSize)
+        };
+    }
 }
+
+public class PathFinder
+{
+    private TileMap _tileMap;
+
+    public PathFinder(TileMap tileMap)
+    {
+        _tileMap = tileMap;
+    }
+
+    public IEnumerable<SimpleLinkedList<TilePosition>> FindPaths(TilePosition start, TilePosition target, int maxDepth)
+    {
+        var visited = new HashSet<TilePosition>();
+        var queue = new Queue<SimpleLinkedList<TilePosition>>();
+        queue.Enqueue(new SimpleLinkedList<TilePosition>(start));
+        visited.Add(start);
+
+        int currentDepth = 0;
+
+        while (queue.Count > 0 && currentDepth < maxDepth)
+        {
+            currentDepth++;
+            var current = queue.Dequeue();
+
+            if (current.Value.Equals(target))
+            {
+                yield return current;
+                yield break;
+            }
+
+            foreach (var neighbor in GetValidNeighbors(current.Value))
+            {
+                if (!visited.Contains(neighbor))
+                {
+                    visited.Add(neighbor);
+                    queue.Enqueue(new SimpleLinkedList<TilePosition>(neighbor, current));
+                }
+            }
+        }
+    }
+
+    private IEnumerable<TilePosition> GetValidNeighbors(TilePosition point)
+    {
+        for (int dy = -1; dy <= 1; dy++)
+        {
+            for (int dx = -1; dx <= 1; dx++)
+            {
+                if (dx == 0 && dy == 0) continue;
+
+                var neighbor = new TilePosition { X = point.X + dx, Y = point.Y + dy };
+
+                if (_tileMap.InBounds(neighbor) && _tileMap.IsEmpthyCell(neighbor))
+                {
+                    yield return neighbor;
+                }
+            }
+        }
+    }
+}
+
+

@@ -101,29 +101,35 @@ public class Monster_1 : IGameObject
     public MotionComponent MotionComp { get; }
     public PhysicalComponent PhysicalComp { get; }
     public AutoMotionComponent AutoMotionComp { get; }
+    public readonly bool IsGravity;
 
     public static readonly float Damage = 20;
 
 
-    public Monster_1(Vector2 position, int health, Texture2D texture, float maxSpeedX, float maxSpeedY, Viewport viewport, float scale,
-    TypesMovement movementType)
+    public Monster_1(MonsterTypeData monsterTypeData, Texture2D texture, Vector2 position, float scale)
     {
-        RenderComp = new RenderComponent(texture, null, scale, 5, 2, 0.1f);
+        IsGravity = monsterTypeData.IsGravity;
+
+        RenderComp = new RenderComponent(
+            texture,
+            null,
+            scale,
+            monsterTypeData.CountFrameX,
+            monsterTypeData.CountFrameY,
+            monsterTypeData.FrameTime);
 
 
         PositionComp = new PositionComponent(position, RenderComp);
 
-
-
-        HealthComp = new HealthComponent(health, health);
+        HealthComp = new HealthComponent(monsterTypeData.Health, monsterTypeData.Health);
         PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
-        MotionComp = new MotionComponent(maxSpeedX, maxSpeedY, PositionComp, PhysicalComp, false);
+        MotionComp = new MotionComponent(monsterTypeData.SpeedX, monsterTypeData.SpeedY, PositionComp, PhysicalComp, false);
 
         AutoMotionComp = new AutoMotionComponent(
         PositionComp,
         MotionComp,
         RenderComp,
-        AutoMotionComponent.CreateMovement(movementType));
+        AutoMotionComponent.CreateMovement(monsterTypeData.algorithmMovement));
 
         RenderComp.PositionComp = PositionComp;
         RenderComp.MotionComp = MotionComp;
@@ -136,7 +142,9 @@ public class Monster_1 : IGameObject
         Console.WriteLine($"{PositionComp.Position.X}  {PositionComp.Position.Y}");
         AutoMotionComp.Update();
         MotionComp.Update();
-        PhysicalComp.Update();
+
+        if (IsGravity)
+            PhysicalComp.Update();
         HealthComp.Update(this);
     }
 
@@ -255,6 +263,7 @@ public class MedKit : ICollectible
     {
         GameWorld.player.HealthComp.ChangeHealth((int)recoveryCount);
         GameWorld.Level.gameObjectCreator.Remove(this);
+        SoundController.PlayCollectSound();
     }
 
     public void Update()
@@ -292,6 +301,7 @@ public class Ammo : ICollectible
     {
         GameWorld.player.AmmoCount += Count;
         GameWorld.Level.gameObjectCreator.Remove(this);
+        SoundController.PlayCollectSound();
     }
 
     public void Update()
@@ -327,12 +337,13 @@ public class ExitDoor : ICollectible
 
     public void Collect()
     {
+        SoundController.PlayOpenDoor();
         GameState.CurrentLevel += 1;
     }
 
     public void Update()
     {
-        if (PhysicalComponent.CheckColisionBetweenObjects(GameWorld.player, this) )
+        if (PhysicalComponent.CheckColisionBetweenObjects(GameWorld.player, this))
         {
             Collect();
         }

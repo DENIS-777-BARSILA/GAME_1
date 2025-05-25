@@ -109,13 +109,14 @@ public class HealthComponent
             if (PhysicalComponent.CheckColisionBetweenObjects(gameObject, monster))
             {
                 ChangeHealth(-(int)Monster_1.Damage);
+                SoundController.PlayRandomChomp();
             }
         }
 
         if (health <= 0)
             GameState.CurrentState = GameStates.GameOver;
 
-
+        
     }
 
     public void Update(IGameObject gameObject)
@@ -622,6 +623,7 @@ public class MotionComponent
         get => _speedX;
         set => _speedX = Math.Clamp(value, -MaxSpeedX, MaxSpeedX);
     }
+
     private float _speedY;
     public float SpeedY
     {
@@ -715,27 +717,50 @@ public class MotionComponent
 
     }
 
-    public void Move(Vector2 newPosition)
-    {
-        bool movedX = PhysicalComp.Move(PositionComp.Position + new Vector2(newPosition.X, 0));
-
-        if (movedX)
-            SideMoion = newPosition.X > 0 ? Side.Right : Side.Left;
-        else
-            SideMoion = Side.None;
-    }
 
     public void Move(Side side)
     {
         if (side == Side.None)
             return;
-        float curspeed = side == Side.Right ? MaxSpeedX : MaxSpeedX * -1;
-
-
-        bool movedX = PhysicalComp.Move(PositionComp.Position + new Vector2(curspeed, 0));
-
-        SideMoion = side;
+        if (side == Side.Right || side == Side.Left)
+            Move(side, MaxSpeedX);
+        else
+            Move(side, MaxSpeedY);
     }
+
+    public void Move(Side side, float distance)
+    {
+        if (side == Side.None)
+            return;
+        if (side == Side.Right)
+            PhysicalComp.Move(PositionComp.Position + new Vector2(distance, 0));
+        if (side == Side.Left)
+            PhysicalComp.Move(PositionComp.Position + new Vector2(-distance, 0));
+        if (side == Side.Top)
+            PhysicalComp.Move(PositionComp.Position + new Vector2(0, -distance));
+        if (side == Side.Bottom)
+            PhysicalComp.Move(PositionComp.Position + new Vector2(0, distance));
+
+        if (side == Side.Top || side == Side.Bottom)
+            SideMoion = Side.None;
+        else
+            SideMoion = side;
+    }
+
+    public void Move(Vector2 direction)
+{
+    if (direction.LengthSquared() > 1)
+        direction = Vector2.Normalize(direction);
+    
+    Vector2 movement = new Vector2(direction.X * MaxSpeedX, direction.Y * MaxSpeedY);
+    
+    PhysicalComp.Move(PositionComp.Position + movement);
+    
+    if (Math.Abs(direction.X) > Math.Abs(direction.Y))
+        SideMoion = direction.X > 0 ? Side.Right : Side.Left;
+    else
+        SideMoion = direction.Y > 0 ? Side.Bottom : Side.Top;
+}
 
     public void Jump()
     {
@@ -790,6 +815,7 @@ public class ShootingComponent
 
     public void MakeBullet(MouseState mouseState)
     {
+        SoundController.PlayShootSound();
         Vector2 target = new Vector2(mouseState.X, mouseState.Y);
 
         Vector2 gunPosition = new Vector2(PositionComp.Position.X + PositionComp.Width / 2, PositionComp.Position.Y + PositionComp.Height / 3);

@@ -91,7 +91,7 @@ public class GameObjectCreator
 
     public void Remove(IGameObject obj)
     {
-    switch (obj)
+        switch (obj)
         {
             case Platform_1 platform:
                 if (Platforms.Contains(platform))
@@ -189,14 +189,10 @@ public class MonsterFactory : IMonsterFactory
         var texture = _textures[data];
         float tileScale = GameWorld.TileMap.CalculateScale(texture);
         return new Monster_1(
-            position,
-            data.Health,
+            data,
             texture,
-            data.SpeedX,
-            data.SpeedY,
-            _viewport,
-            data.Scale * tileScale,
-            data.algorithmMovement);
+            position,
+            tileScale * data.Scale);
     }
 }
 

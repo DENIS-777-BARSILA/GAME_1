@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using Components;
 using System.Linq;
+using Microsoft.Xna.Framework.Media;
+using Microsoft.Xna.Framework.Audio;
 
 
 namespace MY_GAME_1;
@@ -33,6 +35,7 @@ public class Game1 : Game
     {
         base.Initialize();
 
+
     }
 
     protected override void LoadContent()
@@ -47,6 +50,7 @@ public class Game1 : Game
 
     protected override void Update(GameTime gameTime)
     {
+        SoundController.Update();
         GameWorld.GameTime = gameTime;
 
         var keyboardState = Keyboard.GetState();
@@ -82,9 +86,9 @@ public class Game1 : Game
         GraphicsDevice.Clear(Color.CornflowerBlue);
         _spriteBatch.Begin();
 
-        if (GameWorld.background != null)
+        if (GameWorld.menu_background != null)
         {
-            GameWorld.background.RenderComp.Draw(_spriteBatch, gameTime);
+            GameWorld.menu_background.RenderComp.Draw(_spriteBatch, gameTime);
         }
 
         switch (GameState.CurrentState)

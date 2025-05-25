@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/open_door.mp3</SourceFile>
+  <SourceTime>2025-05-25T15:24:23.7781275+05:00</SourceTime>
+  <DestFile>e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/open_door.xnb</DestFile>
+  <DestTime>2025-05-25T15:32:34.4846815+05:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
+  <Processor>SoundEffectProcessor</Processor>
+  <ProcessorTime>2024-08-16T22:05:56+05:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bring.mp3</SourceFile>
+  <SourceTime>2025-05-25T13:37:39.3344322+05:00</SourceTime>
+  <DestFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/bring.xnb</DestFile>
+  <DestTime>2025-05-25T14:52:22.3283188+05:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
+  <Processor>SoundEffectProcessor</Processor>
+  <ProcessorTime>2024-08-16T22:05:56+05:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

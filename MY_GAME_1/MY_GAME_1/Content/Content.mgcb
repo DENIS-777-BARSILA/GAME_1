@@ -37,6 +37,12 @@
 /processorParam:TextureFormat=Color
 /build:Background_0.png
 
+#begin bring.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:bring.mp3
+
 #begin bullet.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -48,6 +54,24 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:bullet.png
+
+#begin chomp_1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:chomp_1.mp3
+
+#begin chomp_2.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:chomp_2.mp3
+
+#begin chomp_3.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:chomp_3.mp3
 
 #begin door.png
 /importer:TextureImporter
@@ -75,6 +99,30 @@
 /processorParam:TextureFormat=Compressed
 /build:font_menu.spritefont
 
+#begin game_over.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:game_over.mp3
+
+#begin main_menu_back.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:main_menu_back.jpg
+
+#begin main_menu.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:main_menu.mp3
+
 #begin MedKit.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -86,6 +134,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:MedKit.png
+
+#begin menu_choise.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:menu_choise.mp3
 
 #begin mobokot.png
 /importer:TextureImporter
@@ -110,6 +164,24 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:monster_1.png
+
+#begin monster_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:monster_2.png
+
+#begin open_door.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:open_door.mp3
 
 #begin platform_1.png
 /importer:TextureImporter
@@ -170,4 +242,10 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:scottpilgrim_multiple.png
+
+#begin shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:shot.mp3
 

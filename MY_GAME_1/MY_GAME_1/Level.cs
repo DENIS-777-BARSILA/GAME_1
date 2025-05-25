@@ -14,7 +14,9 @@ namespace MY_GAME_1;
 
 public class Level
 {
-    public Texture2D BackgroundImage { get; private set; }
+    public Texture2D GameBackgroundImage { get; private set; }
+    public Texture2D MenuBackgroundImage { get; private set; }
+
     public Texture2D TexturePlayer { get; private set; }
 
     public Dictionary<PlatformTypeData, Texture2D> TexturesPlatforms { get; private set; }
@@ -48,8 +50,10 @@ public class Level
     public void LoadContent()
     {
         InterfaceObjects.LoadContent();
+        SoundController.LoadContent();
 
-        BackgroundImage = GameWorld.Content.Load<Texture2D>(levelData.BackgroundTexture);
+        GameBackgroundImage = GameWorld.Content.Load<Texture2D>(levelData.BackgroundTexture);
+        MenuBackgroundImage = GameWorld.Content.Load<Texture2D>("main_menu_back");
         TexturePlayer = GameWorld.Content.Load<Texture2D>(levelData.PlayerTexture);
         TextureBullet = GameWorld.Content.Load<Texture2D>(levelData.BulletTexture);
 
@@ -85,7 +89,7 @@ public class Level
         Initialize();
         InitializePlayer();
         InterfaceObjects.InitializeInterface();
-        
+
     }
 
     public void SetLevelNumber(int levelNumber)
@@ -103,7 +107,8 @@ public class Level
     {
         GameWorld.TileMap = new TileMap();
 
-        GameWorld.background = new Background(BackgroundImage, 2f);
+        GameWorld.game_background = new Background(GameBackgroundImage, 2f);
+        GameWorld.menu_background = new Background(MenuBackgroundImage, 1f);
 
         var platformFactory = new PlatformFactory(GameWorld.GraphicsDevice.Viewport, TexturesPlatforms);
         var monsterFactory = new MonsterFactory(GameWorld.GraphicsDevice.Viewport, TexturesMonsters);
@@ -128,9 +133,9 @@ public class Level
     {
         var playerPosition = GameWorld.TileMap.GetPosition(levelData.PlayerStartPosition);
         GameWorld.player = new Player(playerPosition, 180, 200, TexturePlayer, 5, 5,
-                                   GameWorld.GraphicsDevice.Viewport, 0.05f);
+                                   GameWorld.GraphicsDevice.Viewport, 0.048f);
 
-        
+
     }
 
     private void InitializeGameProcess()
@@ -139,7 +144,7 @@ public class Level
         GameWorld.Update += () => GameWorld.player.Update();
         GameWorld.Update += () => Bullet.Update(GameWorld.Bullets);
 
-        GameWorld.Draw += (gameTime) => GameWorld.background.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
+        GameWorld.Draw += (gameTime) => GameWorld.game_background.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => GameWorld.player.RenderComp.Draw(GameWorld._spriteBatch, gameTime);
         GameWorld.Draw += (gameTime) => gameObjectCreator.Draw(GameWorld._spriteBatch, gameTime);
 
@@ -172,9 +177,28 @@ public class LevelData
 
 public class TilePosition
 {
-    public int TileX { get; set; }
-    public int TileY { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    public override bool Equals(object obj)
+    {
+        return obj is TilePosition position &&
+               X == position.X &&
+               Y == position.Y;
+    }
+
+    public static bool operator ==(TilePosition first, TilePosition second)
+    {
+        return first.Equals(second);
+    }
+
+    public static bool operator !=(TilePosition first, TilePosition second)
+    {
+        return !(first == second);
+    }
 }
+
+
 
 public class MonsterTypeData
 {
@@ -186,6 +210,11 @@ public class MonsterTypeData
     public float SpeedY;
 
     public float Scale;
+    public float Damage;
+    public int CountFrameX;
+    public int CountFrameY;
+    public float FrameTime;
+    public bool IsGravity;
 
     public TypesMovement algorithmMovement;
 }

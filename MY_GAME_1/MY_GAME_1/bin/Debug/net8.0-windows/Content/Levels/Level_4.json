@@ -1,5 +1,5 @@
 {
-  "TileMapFile": "Level_Map_1.txt",
+  "TileMapFile": "Level_Map_4.txt",
   "BackgroundTexture": "Background_0",
   "PlayerTexture": "player",
   "BulletTexture": "bullet",
@@ -49,6 +49,11 @@
         "Texture": "Ammo",
         "Type": "Ammo",
         "Value": 50
+    },
+    "D": {
+        "Texture": "Door",
+        "Type": "Door",
+        "Value": 0
     }
 }
 }

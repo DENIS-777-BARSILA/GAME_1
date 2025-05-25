@@ -23,7 +23,7 @@ public enum GameStates
 
 public static class GameState
 {
-    public static GameStates CurrentState { get; set; } = GameStates.GameOver;
+    public static GameStates CurrentState { get; set; } = GameStates.MainMenu;
     private static int currentLevel = 1;
 
     public static int CurrentLevel
@@ -38,6 +38,8 @@ public static class GameState
             }
         }
     }
+
+
 
 }
 
@@ -102,10 +104,12 @@ public class Menu
     {
         if (keyboardState.IsKeyDown(Keys.Down) && selectedIndex < menuItems.Count - 1)
         {
+            SoundController.PlayMenuChoice();
             selectedIndex++;
         }
         else if (keyboardState.IsKeyDown(Keys.Up) && selectedIndex > 0)
         {
+            SoundController.PlayMenuChoice();
             selectedIndex--;
         }
 

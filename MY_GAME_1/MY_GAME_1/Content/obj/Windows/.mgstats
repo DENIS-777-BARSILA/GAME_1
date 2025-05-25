@@ -1,3 +1,2 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/door.png","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/door.xnb","TextureProcessor","Texture2DContent",9972,139961,0,1168971
-"c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/font_menu.spritefont","c:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/font_menu.xnb","FontDescriptionProcessor","SpriteFontContent",2068,136226,0,0717715
+"e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_2.png","e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/monster_2.xnb","TextureProcessor","Texture2DContent",197241,1460061,0,1226231

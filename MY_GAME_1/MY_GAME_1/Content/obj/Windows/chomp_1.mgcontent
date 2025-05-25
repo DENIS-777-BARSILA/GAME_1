@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <SourceFile>e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/chomp_1.mp3</SourceFile>
+  <SourceTime>2025-05-25T13:38:13.5469214+05:00</SourceTime>
+  <DestFile>e:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/chomp_1.xnb</DestFile>
+  <DestTime>2025-05-25T14:52:17.3382782+05:00</DestTime>
+  <Importer>Mp3Importer</Importer>
+  <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
+  <Processor>SoundEffectProcessor</Processor>
+  <ProcessorTime>2024-08-16T22:05:56+05:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>
