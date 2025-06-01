@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/game_over.mp3</SourceFile>
-  <SourceTime>2025-05-25T13:39:12.4621128+05:00</SourceTime>
-  <DestFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/game_over.xnb</DestFile>
-  <DestTime>2025-05-25T14:52:44.6434776+05:00</DestTime>
+  <SourceFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/game_over.mp3</SourceFile>
+  <SourceTime>2025-05-26T13:23:46.8380826+05:00</SourceTime>
+  <DestFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/game_over.xnb</DestFile>
+  <DestTime>2025-05-26T13:25:33.886433+05:00</DestTime>
   <Importer>Mp3Importer</Importer>
   <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
   <Processor>SoundEffectProcessor</Processor>

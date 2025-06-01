@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/File.spritefont</SourceFile>
-  <SourceTime>2025-05-21T17:30:26.095238+05:00</SourceTime>
-  <DestFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/font_1.xnb</DestFile>
-  <DestTime>2025-05-21T17:30:50.7284775+05:00</DestTime>
+  <SourceFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/File.spritefont</SourceFile>
+  <SourceTime>2025-05-19T14:24:47.7871619+05:00</SourceTime>
+  <DestFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/font_1.xnb</DestFile>
+  <DestTime>2025-05-26T13:25:33.3736494+05:00</DestTime>
   <Importer>FontDescriptionImporter</Importer>
   <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
   <Processor>FontDescriptionProcessor</Processor>

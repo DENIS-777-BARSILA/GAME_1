@@ -12,11 +12,11 @@ using SimpleLinkedList;
 namespace Components;
 
 
-
 public enum TypesMovement
 {
     Simple,
     Patrol,
+    Patrol_Flying,
     AlgorithmMovement_Flying
 }
 
@@ -31,7 +31,7 @@ public class AutoMotionComponent
     private PositionComponent positionComp;
     private MotionComponent motionComp;
     private RenderComponent renderComp;
-    private AlgorithmMovement currentAlgorithmMovement;
+    public AlgorithmMovement currentAlgorithmMovement;
 
     public AutoMotionComponent(
         PositionComponent position,
@@ -59,7 +59,8 @@ public class AutoMotionComponent
     {
         return type switch
         {
-            TypesMovement.Patrol => new PatrolMovement(),
+            TypesMovement.Patrol => new PatrolMovement(false),
+            TypesMovement.Patrol_Flying => new PatrolMovement(true),
             TypesMovement.AlgorithmMovement_Flying => new AlgorithmMovement_Flying(),
             _ => new AlgorithmMovement_Simple()
 
@@ -110,14 +111,22 @@ public class AlgorithmMovement_Simple : AlgorithmMovement
 
 public class PatrolMovement : AlgorithmMovement
 {
-    private const float PatrolRange = 1200f;
+    private const int CountTileRange = 10;
     private float? startX;
+    private bool IsFlying = false;
     private bool movingRight = true;
     private int directionChangeCooldown = 0;
     private const int DirectionChangeCooldownFrames = 10;
     private readonly Random random = new Random();
 
+    private readonly TileMap tileMap = GameWorld.TileMap;
+
     private PhysicalComponent physicalComp;
+
+    public PatrolMovement(bool isFlying)
+    {
+        IsFlying = isFlying;
+    }
 
     public void Update(PositionComponent position, MotionComponent motion, RenderComponent render)
     {
@@ -135,32 +144,37 @@ public class PatrolMovement : AlgorithmMovement
             return;
         }
 
-        bool shouldTurn = ShouldTurnAround(position, motion);
-
-        if (shouldTurn)
+        if (ShouldTurnAround(position, motion))
         {
             ChangeDirection();
         }
+
         else
-        {
             motion.Move(movingRight ? Side.Right : Side.Left);
-        }
     }
 
-    private bool ShouldTurnAround(PositionComponent position, MotionComponent motion)
+    private bool ShouldTurnAround(PositionComponent positionComp, MotionComponent motionComp)
     {
-        if ((movingRight && position.Position.X > startX + PatrolRange) ||
-            (!movingRight && position.Position.X < startX))
+        if ((movingRight && positionComp.Position.X > startX + CountTileRange * tileMap.TileSize) ||
+            (!movingRight && positionComp.Position.X < startX))
         {
             return true;
         }
-        Vector2 movement = movingRight ? Vector2.UnitX : -Vector2.UnitX;
-        Vector2 newPosition = position.Position + movement * motion.MaxSpeedX;
 
+        Vector2 movement = movingRight ? Vector2.UnitX : -Vector2.UnitX;
+        Vector2 newPosition = positionComp.Position + movement * motionComp.MaxSpeedX;
         var collision = physicalComp.GetCollisionSide(newPosition);
 
+
+        float checkAhead = movingRight ? tileMap.TileSize / 2 : -tileMap.TileSize / 2;
+        Vector2 checkPosition = positionComp.Position + new Vector2(checkAhead, tileMap.TileSize);
+        TilePosition nextGroundTile = tileMap.GetTilePosition(checkPosition);
+        Console.WriteLine($"Auto  {checkPosition.X} {checkPosition.Y}   Tile  {nextGroundTile.X} {nextGroundTile.Y}");
+
+
         return (movingRight && collision.Side == Side.Right) ||
-               (!movingRight && collision.Side == Side.Left);
+               (!movingRight && collision.Side == Side.Left)
+               || (tileMap.IsEmpthyCell(nextGroundTile) && !IsFlying);
     }
 
     private void ChangeDirection()
@@ -170,10 +184,12 @@ public class PatrolMovement : AlgorithmMovement
     }
 }
 
-
 public class AlgorithmMovement_Flying : AlgorithmMovement
 {
-    private const int MaxSearchDepth = 10;
+    private AlgorithmMovement PatrolMovementAlgorithm;
+
+    private readonly float ShiftDistance = GameWorld.TileMap.TileSize / 5;
+    private const int MaxSearchDepth = 2000;
     private TileMap tileMap = GameWorld.TileMap;
     private PathFinder pathFinder;
     private float lastPathUpdate;
@@ -183,71 +199,84 @@ public class AlgorithmMovement_Flying : AlgorithmMovement
     public AlgorithmMovement_Flying()
     {
         pathFinder = new PathFinder(tileMap);
+        PatrolMovementAlgorithm = new PatrolMovement(false);
     }
 
     public void Update(PositionComponent positionComp, MotionComponent motionComp, RenderComponent render)
     {
-        try
+        float currentTime = (float)GameWorld.GameTime.TotalGameTime.TotalSeconds;
+
+        if (currentTime - lastPathUpdate > pathUpdateInterval || currentPath == null)
         {
-            float currentTime = (float)GameWorld.GameTime.TotalGameTime.TotalSeconds;
+            UpdatePath(positionComp, motionComp);
+            lastPathUpdate = currentTime;
+        }
 
-            if (currentTime - lastPathUpdate > pathUpdateInterval || currentPath == null)
-            {
-                UpdatePath(positionComp);
-                lastPathUpdate = currentTime;
-            }
 
+        if (currentPath != null)
+        {
             FollowPath(positionComp, motionComp);
         }
-        catch (Exception ex)
+
+        else
         {
-            Console.WriteLine($"Error in flying movement: {ex.Message}");
+            PatrolMovementAlgorithm.Update(positionComp, motionComp, render);
         }
+
     }
 
-    private void UpdatePath(PositionComponent positionComp)
+    private void UpdatePath(PositionComponent positionComp, MotionComponent motionComp)
     {
-        var playerPos = GameWorld.player.PositionComp.Position;
-        var monsterPos = positionComp.Position;
+        var playerPositionComp = GameWorld.player.PositionComp;
 
-        var playerTile = WorldToTile(playerPos);
-        var monsterTile = WorldToTile(monsterPos);
+        var playerTile = GameWorld.TileMap.GetTilePosition(playerPositionComp.Position, playerPositionComp.Width, playerPositionComp.Width);
+        var monsterTile = GameWorld.TileMap.GetTilePosition(positionComp.Position, positionComp.Width, positionComp.Height);
 
-        if (!tileMap.InBounds(playerTile) || !tileMap.InBounds(monsterTile))
-            return;
+        if (!tileMap.InBounds(playerTile)) return;
 
-        currentPath = pathFinder.FindPaths(monsterTile, playerTile, MaxSearchDepth).FirstOrDefault();
+        var paths = pathFinder.FindPaths(monsterTile, playerTile, MaxSearchDepth);
+        currentPath = paths.FirstOrDefault();
     }
 
     private void FollowPath(PositionComponent positionComp, MotionComponent motionComp)
     {
-        if (currentPath == null) return;
+        if (currentPath == null || currentPath.Previous == null)
+            return;
 
-        var nextPoint = currentPath.Previous?.Value;
-        if (nextPoint == null) return;
-
-        var nextPos = tileMap.GetPosition(nextPoint);
         var currentPos = positionComp.Position;
 
-        Vector2 direction = nextPos - currentPos;
+        var nextPoint = currentPath.Previous.Value;
+        var nextPos = tileMap.GetPosition(nextPoint);
+
+        Vector2 centeredPos = nextPos + new Vector2(tileMap.TileSize / 2 - positionComp.Width / 2,
+            tileMap.TileSize / 2 - positionComp.Height / 2);
+
+        Vector2 playerCenteredPos = GameWorld.player.PositionComp.Position + new Vector2(tileMap.TileSize / 2 - positionComp.Width / 2,
+            tileMap.TileSize / 2 - positionComp.Height / 2);
+
+        var direction = centeredPos - currentPos;
+
+        if (Vector2.DistanceSquared(currentPos, GameWorld.player.PositionComp.Position) <= tileMap.TileSize)
+        {
+            motionComp.Move(GameWorld.player.PositionComp.Position - currentPos);
+            return;
+        }
+
         if (direction != Vector2.Zero)
+        {
             direction.Normalize();
 
-        motionComp.Move(direction);
+            if (Math.Abs(direction.X) > Math.Abs(direction.Y))
+                direction = new Vector2(Math.Sign(direction.X), 0);
 
-        if (Vector2.Distance(currentPos, nextPos) < 10f)
-        {
-            currentPath = currentPath.Previous;
+            else
+                direction = new Vector2(0, Math.Sign(direction.Y));
+
+            motionComp.Move(direction);
+
+            if (Vector2.Distance(currentPos, nextPos) < ShiftDistance)
+                currentPath = currentPath.Previous;
         }
-    }
-
-    private TilePosition WorldToTile(Vector2 worldPos)
-    {
-        return new TilePosition
-        {
-            X = (int)(worldPos.X / tileMap.TileSize),
-            Y = (int)(worldPos.Y / tileMap.TileSize)
-        };
     }
 }
 
@@ -280,7 +309,7 @@ public class PathFinder
                 yield break;
             }
 
-            foreach (var neighbor in GetValidNeighbors(current.Value))
+            foreach (var neighbor in GetNeighbors(current.Value))
             {
                 if (!visited.Contains(neighbor))
                 {
@@ -291,20 +320,16 @@ public class PathFinder
         }
     }
 
-    private IEnumerable<TilePosition> GetValidNeighbors(TilePosition point)
+    private IEnumerable<TilePosition> GetNeighbors(TilePosition point)
     {
-        for (int dy = -1; dy <= 1; dy++)
+        var directions = new (int dx, int dy)[] { (0, -1), (1, 0), (0, 1), (-1, 0) };
+
+        foreach (var dir in directions)
         {
-            for (int dx = -1; dx <= 1; dx++)
+            var neighbor = new TilePosition { X = point.X + dir.dx, Y = point.Y + dir.dy };
+            if (_tileMap.InBounds(neighbor) && _tileMap.IsEmpthyCell(neighbor))
             {
-                if (dx == 0 && dy == 0) continue;
-
-                var neighbor = new TilePosition { X = point.X + dx, Y = point.Y + dy };
-
-                if (_tileMap.InBounds(neighbor) && _tileMap.IsEmpthyCell(neighbor))
-                {
-                    yield return neighbor;
-                }
+                yield return neighbor;
             }
         }
     }

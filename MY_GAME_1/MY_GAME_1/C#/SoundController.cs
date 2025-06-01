@@ -1,13 +1,5 @@
 using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Components;
-using MY_GAME_1;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Content;
-using System.IO;
-using SharpDX.MediaFoundation;
 using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Audio;
 
@@ -19,7 +11,6 @@ public static class SoundController
     //music
     private static Song MainMenuBack;
     private static Song MainGameBack;
-    private static Song MenuChoice;
 
 
     //effect
@@ -37,14 +28,13 @@ public static class SoundController
     private static Song currentSong;
     private static bool _gameOverSoundPlayed = false;
 
-    public static float MusicVolume { get; set; } = 1.0f;
-    public static float EffectsVolume { get; set; } = 1.0f;
+    public static float MusicVolume { get; set; } = 0.8f;
+    public static float EffectsVolume { get; set; } = 0.5f;
 
     public static void LoadContent()
     {
         MainMenuBack = GameWorld.Content.Load<Song>("main_menu");
         MainGameBack = GameWorld.Content.Load<Song>("main_menu");
-
 
         Chomp = new List<SoundEffect>();
         GameOver = GameWorld.Content.Load<SoundEffect>("game_over");
@@ -96,7 +86,6 @@ public static class SoundController
         MediaPlayer.IsRepeating = true;
     }
 
-
     private static void PlayEffect(SoundEffect effect)
     {
         if (effect != null)
@@ -116,8 +105,6 @@ public static class SoundController
 
         PlayEffect(randomEffect);
     }
-
-
 
     public static void PlayMenuChoiceSound()
     {
@@ -153,6 +140,4 @@ public static class SoundController
     {
         PlayEffect(OpenDoor);
     }
-
-
 }

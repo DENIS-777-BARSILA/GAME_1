@@ -4,31 +4,31 @@
   <Platform>Windows</Platform>
   <Config />
   <SourceFiles>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/Ammo.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bring.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/chomp_1.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/chomp_2.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/chomp_3.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/door.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/File.spritefont</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/font_menu.spritefont</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/game_over.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/main_menu_back.jpg</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/main_menu.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/MedKit.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/menu_choise.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_2.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/open_door.mp3</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_2.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_3.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_4.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
-    <File>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/shot.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Ammo.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/Background_0.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bring.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bullet.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/chomp_1.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/chomp_2.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/chomp_3.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/door.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/File.spritefont</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/font_menu.spritefont</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/game_over.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/main_menu_back.jpg</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/main_menu.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/MedKit.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/menu_choise.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/mobokot.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_1.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/monster_2.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/open_door.mp3</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_1.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_2.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_3.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_4.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/scottpilgrim_multiple.png</File>
+    <File>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/shot.mp3</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

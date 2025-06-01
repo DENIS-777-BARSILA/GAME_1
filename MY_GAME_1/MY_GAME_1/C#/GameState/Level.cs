@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
+using System;
 
 namespace MY_GAME_1;
 
@@ -77,19 +78,20 @@ public class Level
         GameWorld.ColisionObjects.Clear();
         GameWorld.CollectibleObjects.Clear();
 
+
         GameWorld.Update = null;
         GameWorld.Draw = null;
     }
 
     public void InitializeNewGame()
     {
+        GameState.CurrentLevel = 1;
         ResetGameState();
         LoadLevelData(1);
         LoadContent();
         Initialize();
         InitializePlayer();
         InterfaceObjects.InitializeInterface();
-
     }
 
     public void SetLevelNumber(int levelNumber)
@@ -99,6 +101,7 @@ public class Level
         LoadContent();
         InitializePlayer();
         Initialize();
+        SetPlayerPosition();
         InterfaceObjects.InitializeInterface();
     }
 
@@ -132,11 +135,20 @@ public class Level
     private void InitializePlayer()
     {
         var playerPosition = GameWorld.TileMap.GetPosition(levelData.PlayerStartPosition);
+
+
+         Console.WriteLine($"Player pos datalevel {levelData.PlayerStartPosition.X}  {levelData.PlayerStartPosition.Y}");
+        Console.WriteLine($"Player pos  {playerPosition.X}  {playerPosition.Y}");
         GameWorld.player = new Player(playerPosition, 180, 200, TexturePlayer, 5, 5,
                                    GameWorld.GraphicsDevice.Viewport, 0.048f);
-
-
     }
+
+    private void SetPlayerPosition()
+    {
+        var playerPosition = GameWorld.TileMap.GetPosition(levelData.PlayerStartPosition);
+        GameWorld.player.PositionComp.Position = playerPosition;
+    }
+
 
     private void InitializeGameProcess()
     {
@@ -182,13 +194,19 @@ public class TilePosition
 
     public override bool Equals(object obj)
     {
-        return obj is TilePosition position &&
-               X == position.X &&
-               Y == position.Y;
+        if (obj is null || !(obj is TilePosition))
+            return false;
+
+        var position = (TilePosition)obj;
+        return X == position.X && Y == position.Y;
     }
 
     public static bool operator ==(TilePosition first, TilePosition second)
     {
+        if (ReferenceEquals(first, second))
+            return true;
+        if (first is null || second is null)
+            return false;
         return first.Equals(second);
     }
 

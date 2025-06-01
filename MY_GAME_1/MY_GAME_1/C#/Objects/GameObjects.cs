@@ -64,10 +64,7 @@ public class Player : IGameObject
     {
         RenderComp = new RenderComponent(texture, null, scale, 1, 1, 0.1f);
 
-
         PositionComp = new PositionComponent(position, RenderComp);
-
-
 
         HealthComp = new HealthComponent(maxHealth, health);
         PhysicalComp = new PhysicalComponent(PositionComp, RenderComp);
@@ -139,7 +136,8 @@ public class Monster_1 : IGameObject
 
     public void Update()
     {
-        Console.WriteLine($"{PositionComp.Position.X}  {PositionComp.Position.Y}");
+        TilePosition tilePos = GameWorld.TileMap.GetTilePosition(PositionComp.Position);
+        Console.WriteLine($"{PositionComp.Position.X}  {PositionComp.Position.Y}   Tile: {tilePos.X} {tilePos.Y}");
         AutoMotionComp.Update();
         MotionComp.Update();
 

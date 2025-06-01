@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/MedKit.png</SourceFile>
-  <SourceTime>2025-05-21T17:30:26.0962144+05:00</SourceTime>
-  <DestFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/MedKit.xnb</DestFile>
-  <DestTime>2025-05-21T17:30:50.8437799+05:00</DestTime>
+  <SourceFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/MedKit.png</SourceFile>
+  <SourceTime>2025-05-18T15:02:03.8848042+05:00</SourceTime>
+  <DestFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/MedKit.xnb</DestFile>
+  <DestTime>2025-05-26T13:25:38.8737796+05:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

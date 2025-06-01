@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PipelineBuildEvent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <SourceFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_4.png</SourceFile>
-  <SourceTime>2025-05-21T17:30:26.2007687+05:00</SourceTime>
-  <DestFile>E:/GitHub/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/platform_4.xnb</DestFile>
-  <DestTime>2025-05-21T17:30:51.0724313+05:00</DestTime>
+  <SourceFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/platform_4.png</SourceFile>
+  <SourceTime>2025-05-15T10:15:48.1415033+05:00</SourceTime>
+  <DestFile>C:/UniryGame/GitHub1/GAME_1/MY_GAME_1/MY_GAME_1/Content/bin/Windows/Content/platform_4.xnb</DestFile>
+  <DestTime>2025-05-26T13:25:39.7887399+05:00</DestTime>
   <Importer>TextureImporter</Importer>
   <ImporterTime>2024-08-16T22:05:56+05:00</ImporterTime>
   <Processor>TextureProcessor</Processor>

@@ -23,9 +23,9 @@
       "Health": 100,
       "SpeedX": 3,
       "SpeedY": 0,
-      "Scale": 5,
+      "Scale": 4.5,
       "Damage": 40,
-      "CountFrameX": 3,
+      "CountFrameX": 5,
       "countFrameY": 2,
       "frameTime": 0.1,
       "IsGravity": true,
@@ -45,14 +45,14 @@
       "AlgorithmMovement": "Patrol"
     },
     "C": {
-      "Texture": "monster_1",
+      "Texture": "monster_2",
       "Health": 100,
       "SpeedX": 2,
       "SpeedY": 2,
-      "Scale": 3,
+      "Scale": 4.5,
       "Damage": 40,
-      "CountFrameX": 5,
-      "countFrameY": 2,
+      "CountFrameX": 4,
+      "countFrameY": 1,
       "frameTime": 0.1,
       "IsGravity": false,
       "AlgorithmMovement": "AlgorithmMovement_Flying"
@@ -62,18 +62,18 @@
       "Health": 100,
       "SpeedX": 2,
       "SpeedY": 2,
-      "Scale": 5,
+      "Scale": 3.5,
       "Damage": 40,
       "CountFrameX": 4,
       "countFrameY": 1,
       "frameTime": 0.1,
       "IsGravity": false,
-      "AlgorithmMovement": "Patrol"
+      "AlgorithmMovement": "Patrol_Flying"
     }
   },
   "PlayerStartPosition": {
-    "TileX": 2,
-    "TileY": 2
+    "X": 1,
+    "Y": 3
   },
   "CollectibleTypes": {
     "M": {

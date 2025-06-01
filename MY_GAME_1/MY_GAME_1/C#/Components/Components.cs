@@ -116,7 +116,7 @@ public class HealthComponent
         if (health <= 0)
             GameState.CurrentState = GameStates.GameOver;
 
-        
+
     }
 
     public void Update(IGameObject gameObject)
@@ -713,10 +713,7 @@ public class MotionComponent
 
         if (keyboardState.IsKeyDown(Keys.Up))
             Jump();
-
-
     }
-
 
     public void Move(Side side)
     {
@@ -748,19 +745,19 @@ public class MotionComponent
     }
 
     public void Move(Vector2 direction)
-{
-    if (direction.LengthSquared() > 1)
-        direction = Vector2.Normalize(direction);
-    
-    Vector2 movement = new Vector2(direction.X * MaxSpeedX, direction.Y * MaxSpeedY);
-    
-    PhysicalComp.Move(PositionComp.Position + movement);
-    
-    if (Math.Abs(direction.X) > Math.Abs(direction.Y))
-        SideMoion = direction.X > 0 ? Side.Right : Side.Left;
-    else
-        SideMoion = direction.Y > 0 ? Side.Bottom : Side.Top;
-}
+    {
+        if (direction.LengthSquared() > 1)
+            direction = Vector2.Normalize(direction);
+
+        Vector2 movement = new Vector2(direction.X * MaxSpeedX, direction.Y * MaxSpeedY);
+
+        PhysicalComp.Move(PositionComp.Position + movement);
+
+        if (Math.Abs(direction.X) >= Math.Abs(direction.Y))
+            SideMoion = direction.X > 0 ? Side.Right : Side.Left;
+        else
+            SideMoion = direction.Y > 0 ? Side.Bottom : Side.Top;
+    }
 
     public void Jump()
     {
@@ -770,7 +767,6 @@ public class MotionComponent
             JumpSpeed = JumpHeight;
         }
     }
-
 }
 
 public class ShootingComponent
@@ -796,7 +792,6 @@ public class ShootingComponent
 
     public void Update(MouseState mouseState)
     {
-
         if (mouseState.LeftButton == ButtonState.Pressed)
         {
             float currentTime = (float)GameWorld.GameTime.TotalGameTime.TotalSeconds;

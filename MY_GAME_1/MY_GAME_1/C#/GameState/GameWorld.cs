@@ -10,20 +10,15 @@ using System.IO;
 using SharpDX.MediaFoundation;
 
 
-
 namespace MY_GAME_1;
 
 public static class GameWorld
 {
-
-
-
     public static GraphicsDevice GraphicsDevice;
     public static ContentManager Content;
     public static GameTime GameTime;
     public static SpriteBatch _spriteBatch;
     public static Viewport viewport;
-
 
 
     public static Action Update;

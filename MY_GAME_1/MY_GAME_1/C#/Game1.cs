@@ -99,7 +99,7 @@ public class Game1 : Game
                 break;
 
             case GameStates.Playing:
-                GameWorld.Draw?.Invoke(gameTime);
+                GameWorld.Draw?.Invoke(gameTime);             
                 break;
 
             case GameStates.Paused:
@@ -120,14 +120,6 @@ public class Game1 : Game
                     InterfaceObjects.GameOverMenu.Draw(_spriteBatch);
                 break;
         }
-
-        // хитбокс игрока
-        //  Rectangle playerBounds = new Rectangle(
-        //     (int)GameWorld.player.PositionComp.Position.X,
-        //     (int)GameWorld.player.PositionComp.Position.Y,
-        //   GameWorld.player.RenderComp.Width,
-        //   GameWorld.player.RenderComp.Height);
-        //   _spriteBatch.Draw(debugTexture, playerBounds, Color.Red * 0.5f);
 
         _spriteBatch.End();
 

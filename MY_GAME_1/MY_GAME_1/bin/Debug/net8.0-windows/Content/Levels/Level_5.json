@@ -1,5 +1,5 @@
 {
-  "TileMapFile": "Level_Map_5.txt",
+  "TileMapFile": "Level_Map_1.txt",
   "BackgroundTexture": "Background_0",
   "PlayerTexture": "player",
   "BulletTexture": "bullet",
@@ -24,36 +24,72 @@
       "SpeedX": 3,
       "SpeedY": 0,
       "Scale": 4.5,
+      "Damage": 40,
+      "CountFrameX": 5,
+      "countFrameY": 2,
+      "frameTime": 0.1,
+      "IsGravity": true,
       "AlgorithmMovement": "Simple"
     },
     "B": {
       "Texture": "monster_1",
-      "Health": 150,
-      "SpeedX": 2,
+      "Health": 100,
+      "SpeedX": 3,
       "SpeedY": 0,
-      "Scale": 5.0,
+      "Scale": 4.5,
+      "Damage": 40,
+      "CountFrameX": 5,
+      "countFrameY": 2,
+      "frameTime": 0.1,
+      "IsGravity": true,
       "AlgorithmMovement": "Patrol"
+    },
+    "C": {
+      "Texture": "monster_2",
+      "Health": 100,
+      "SpeedX": 2,
+      "SpeedY": 2,
+      "Scale": 3,
+      "Damage": 40,
+      "CountFrameX": 5,
+      "countFrameY": 2,
+      "frameTime": 0.1,
+      "IsGravity": false,
+      "AlgorithmMovement": "AlgorithmMovement_Flying"
+    },
+    "E": {
+      "Texture": "monster_2",
+      "Health": 100,
+      "SpeedX": 2,
+      "SpeedY": 2,
+      "Scale": 5,
+      "Damage": 40,
+      "CountFrameX": 4,
+      "countFrameY": 1,
+      "frameTime": 0.1,
+      "IsGravity": false,
+      "AlgorithmMovement": "Patrol_Flying"
     }
   },
   "PlayerStartPosition": {
-    "TileX": 2,
-    "TileY": 2
+    "X": 2,
+    "Y": 2
   },
   "CollectibleTypes": {
     "M": {
-        "Texture": "MedKit",
-        "Type": "MedKit",
-        "Value": 50
+      "Texture": "MedKit",
+      "Type": "MedKit",
+      "Value": 50
     },
     "K": {
-        "Texture": "Ammo",
-        "Type": "Ammo",
-        "Value": 50
+      "Texture": "Ammo",
+      "Type": "Ammo",
+      "Value": 50
     },
     "D": {
-        "Texture": "Door",
-        "Type": "Door",
-        "Value": 0
+      "Texture": "Door",
+      "Type": "Door",
+      "Value": 0
     }
-}
+  }
 }

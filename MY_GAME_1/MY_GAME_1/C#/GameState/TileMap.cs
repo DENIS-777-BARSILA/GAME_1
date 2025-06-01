@@ -14,6 +14,13 @@ using SharpDX.MediaFoundation;
 namespace MY_GAME_1;
 
 
+public enum TileObjects
+{
+    Empty,
+    Platform
+}
+
+
 public class TileMap
 {
     public float TileSize
@@ -29,13 +36,13 @@ public class TileMap
     public readonly int VerticalTiles = 18;
 
 
-    public IGameObjectData[,] TileData;
+    public TileObjects[,] TileData;
     private int tileSize;
     private float scale;
 
     public TileMap()
     {
-        TileData = new IGameObjectData[HorizontalTiles, VerticalTiles];
+        TileData = new TileObjects[HorizontalTiles, VerticalTiles];
     }
 
     public float CalculateScale(Texture2D texture)
@@ -56,32 +63,35 @@ public class TileMap
         return TileSize * new Vector2(position.X, position.Y);
     }
 
-    public Vector2 GetTilePosition(Vector2 position)
+    public TilePosition GetTilePosition(Vector2 position)
     {
         int tileX = (int)(position.X / TileSize);
         int tileY = (int)(position.Y / TileSize);
+        var _position = new TilePosition { X = tileX, Y = tileY };
 
-        return new Vector2(tileX, tileY);
+        if (!InBounds(_position))
+            Console.WriteLine($"{tileX} {tileY}  out of bound");
+
+        return _position;
+    }
+
+    public TilePosition GetTilePosition(Vector2 position, float Width, float Height)
+    {
+        var centerPos = position + new Vector2(Width / 2, Height / 2);
+
+        return GetTilePosition(centerPos);
     }
 
 
     public bool IsEmpthyCell(int tileX, int tileY)
     {
-        if (tileX < 0 || tileY < 0 ||
-            tileX > GameWorld.TileMap.HorizontalTiles ||
-            tileY > GameWorld.TileMap.VerticalTiles)
+        if (!InBounds(new TilePosition { X = tileX, Y = tileY }))
         {
-            Console.WriteLine($"Недопустимые координаты платформы ({tileX}, {tileY})");
+            Console.WriteLine($"{tileX} {tileY}  out of bound");
             return false;
         }
 
-        if (GameWorld.TileMap.TileData[tileX, tileY] != null)
-        {
-            Console.WriteLine($"Клетка уже занята ({tileX}, {tileY})");
-            return false;
-        }
-
-        return true;
+        return GameWorld.TileMap.TileData[tileX, tileY] == TileObjects.Empty;
     }
 
     public bool IsEmpthyCell(TilePosition position)
@@ -91,11 +101,23 @@ public class TileMap
 
     public bool InBounds(TilePosition position)
     {
-        return position.X >= 0 && position.X <= HorizontalTiles
-        && position.Y >= 0 && position.X <= VerticalTiles;
-
+        return position.X >= 0 && position.X < HorizontalTiles
+            && position.Y >= 0 && position.Y < VerticalTiles;
     }
 
+    Vector2 GetTileCenter(int tileX, int tileY)
+    {
+        return new Vector2(tileX * TileSize + TileSize / 2,
+                          tileY * TileSize + TileSize / 2);
+    }
+
+    bool IsPointInTile(Vector2 point, int tileX, int tileY)
+    {
+        return point.X >= tileX * TileSize &&
+               point.X < (tileX + 1) * TileSize &&
+               point.Y >= tileY * TileSize &&
+               point.Y < (tileY + 1) * TileSize;
+    }
     public void LoadFromTextFile(string filePath, LevelData levelData)
     {
         TileMapObjectsInitializer.InitializeObjects(filePath, levelData, this);
@@ -106,7 +128,11 @@ public static class TileMapObjectsInitializer
 {
     public static void InitializeObjects(string filePath, LevelData levelData, TileMap tileMap)
     {
+        var currentTileData = new TileObjects[tileMap.HorizontalTiles, tileMap.VerticalTiles];
+
+
         string[] lines = System.IO.File.ReadAllLines(filePath);
+
 
         for (int y = 0; y < tileMap.VerticalTiles; y++)
         {
@@ -118,22 +144,37 @@ public static class TileMapObjectsInitializer
 
             for (int x = 0; x < tileMap.HorizontalTiles; x++)
             {
-                TileMapObjectsInitializer.InitializeTypesObj(x, y, levelData, line[x], tileMap);
+                InitializeTypesObj(x, y, levelData, line[x], tileMap, currentTileData);
             }
         }
+
+        tileMap.TileData = currentTileData;
     }
 
 
-    private static void InitializeTypesObj(int tileX, int tileY, LevelData levelData, char type, TileMap tileMap)
+    private static void InitializeTypesObj(int tileX, int tileY, LevelData levelData, char type, TileMap tileMap, TileObjects[,] currentTileData)
     {
+
         if (levelData.MonsterTypes.ContainsKey(type))
+        {
             GameWorld.Level.gameObjectCreator.MakeMonster(tileX, tileY, levelData.MonsterTypes[type]);
 
+        }
+
         else if (levelData.PlatformTypes.ContainsKey(type))
+        {
             GameWorld.Level.gameObjectCreator.MakePlatform(tileX, tileY, levelData.PlatformTypes[type]);
+            currentTileData[tileX, tileY] = TileObjects.Platform;
+        }
 
         else if (levelData.CollectibleTypes.ContainsKey(type))
+        {
             GameWorld.Level.gameObjectCreator.MakeCollectible(tileX, tileY, levelData.CollectibleTypes[type]);
+        }
 
+        else
+        {
+            currentTileData[tileX, tileY] = TileObjects.Empty;
+        }
     }
 }
